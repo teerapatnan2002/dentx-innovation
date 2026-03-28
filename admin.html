@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Dent X Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .admin-stat-card {
+            transition: all 0.3s ease;
+        }
+
+        .admin-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .notification-toast {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-white min-h-screen flex flex-col">
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-3"></div>
+
+    <!-- Navbar -->
+    <nav
+        class="bg-gradient-to-r from-emerald-950 to-slate-900 border-b border-emerald-900 px-6 py-4 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div
+                class="w-10 h-10 bg-gradient-to-br from-teal-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                <i class="fa-solid fa-chart-pie text-xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold">Admin Dashboard</h1>
+                <p class="text-xs text-slate-400">Dent X Ecosystem</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="text-sm text-slate-400 flex items-center">
+                <span class="w-2 h-2 bg-green-500 rounded-full mr-2 pulse-dot"></span>
+                Live Data
+            </span>
+            <a href="index.html" class="text-sm bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition">
+                <i class="fa-solid fa-arrow-left mr-2"></i> กลับหน้าหลัก
+            </a>
+            <button onclick="logout()" class="text-sm bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition">
+                <i class="fa-solid fa-sign-out-alt mr-2"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-1 p-6 container mx-auto max-w-7xl">
+
+        <!-- Stats Row - Enhanced -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div
+                class="bg-gradient-to-br from-blue-600/20 to-blue-900/20 p-5 rounded-xl border border-blue-500/30 admin-stat-card">
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="text-slate-400 text-xs">Total Registrations</h4>
+                    <i class="fa-solid fa-users text-blue-400"></i>
+                </div>
+                <div class="text-3xl font-bold text-white" id="stat-total">0</div>
+                <p class="text-xs text-blue-400 mt-1" id="stat-total-change">-</p>
+            </div>
+            <div
+                class="bg-gradient-to-br from-teal-600/20 to-teal-900/20 p-5 rounded-xl border border-teal-500/30 admin-stat-card">
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="text-slate-400 text-xs">Attendees</h4>
+                    <i class="fa-solid fa-user-check text-teal-400"></i>
+                </div>
+                <div class="text-3xl font-bold text-teal-400" id="stat-attendee">0</div>
+                <p class="text-xs text-slate-500 mt-1">@ 4,500 บาท/คน</p>
+            </div>
+            <div
+                class="bg-gradient-to-br from-orange-600/20 to-orange-900/20 p-5 rounded-xl border border-orange-500/30 admin-stat-card">
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="text-slate-400 text-xs">Vendors</h4>
+                    <i class="fa-solid fa-store text-orange-400"></i>
+                </div>
+                <div class="text-3xl font-bold text-orange-400" id="stat-vendor">0</div>
+                <p class="text-xs text-slate-500 mt-1" id="stat-booth-info">-</p>
+            </div>
+            <div
+                class="bg-gradient-to-br from-green-600/20 to-green-900/20 p-5 rounded-xl border border-green-500/30 admin-stat-card">
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="text-slate-400 text-xs">Revenue (Est.)</h4>
+                    <i class="fa-solid fa-baht-sign text-green-400"></i>
+                </div>
+                <div class="text-3xl font-bold text-green-400" id="stat-revenue">฿0</div>
+                <p class="text-xs text-slate-500 mt-1" id="stat-paid-count">รอชำระ: 0</p>
+            </div>
+        </div>
+
+        <!-- LIVE CHAT SUPPORT SECTION -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 h-[500px]">
+            <!-- Chat List -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col overflow-hidden">
+                <div class="p-4 border-b border-slate-700 bg-slate-900/50">
+                    <h4 class="font-bold text-white flex items-center justify-between">
+                        <span><i class="fa-solid fa-comments text-teal-400 mr-2"></i> Live Conversations</span>
+                        <span class="bg-teal-600 text-xs px-2 py-0.5 rounded-full" id="active-chat-count">0</span>
+                    </h4>
+                </div>
+                <div class="flex-1 overflow-y-auto custom-scrollbar" id="admin-chat-list">
+                    <!-- Chat items will be injected here -->
+                    <div class="p-8 text-center text-slate-500 text-sm">
+                        <i class="fa-solid fa-sync fa-spin mb-2"></i><br>Waiting for chats...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Window -->
+            <div
+                class="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 flex flex-col overflow-hidden relative">
+                <!-- Chat Header -->
+                <div class="p-4 border-b border-slate-700 bg-slate-900/50 flex justify-between items-center"
+                    id="chat-header">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-slate-400">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-white text-sm" id="current-chat-user">Select a conversation</h5>
+                            <p class="text-slate-500 text-xs" id="current-chat-id">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/30" id="admin-chat-messages">
+                    <div class="flex flex-col items-center justify-center h-full text-slate-500">
+                        <i class="fa-regular fa-comments text-4xl mb-3 opacity-20"></i>
+                        <p>Select a chat from the left to start messaging</p>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="p-4 bg-slate-800 border-t border-slate-700">
+                    <form id="admin-chat-form" class="flex gap-2" onsubmit="handleAdminReply(event)">
+                        <input type="text" id="admin-chat-input" disabled
+                            class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:border-teal-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            placeholder="Type a reply...">
+                        <button type="submit" id="admin-chat-send" disabled
+                            class="bg-teal-600 hover:bg-teal-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Registration Trend Chart -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 p-5">
+                <h4 class="text-sm font-bold text-white mb-4 flex items-center">
+                    <i class="fa-solid fa-chart-line text-teal-400 mr-2"></i>
+                    Registration Trend (7 Days)
+                </h4>
+                <canvas id="trendChart" height="200"></canvas>
+            </div>
+
+            <!-- Topic/Booth Breakdown -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-sm font-bold text-white flex items-center">
+                        <i class="fa-solid fa-chart-pie text-orange-400 mr-2"></i>
+                        Breakdown by Category
+                    </h4>
+                    <select id="chartTypeSelect" onchange="updateBreakdownChart()"
+                        class="text-xs bg-slate-700 border border-slate-600 rounded px-2 py-1">
+                        <option value="topic">Topics (Attendees)</option>
+                        <option value="booth">Booth Sizes (Vendors)</option>
+                    </select>
+                </div>
+                <canvas id="breakdownChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Payment Status & Workshop Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Payment Status -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 p-5">
+                <h4 class="text-sm font-bold text-white mb-4 flex items-center">
+                    <i class="fa-solid fa-credit-card text-purple-400 mr-2"></i>
+                    Payment Status
+                </h4>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 text-sm">Paid</span>
+                        <span class="text-green-400 font-bold" id="payment-paid">0</span>
+                    </div>
+                    <div class="w-full bg-slate-700 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full transition-all" id="payment-bar-paid"
+                            style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-slate-400 text-sm">Pending</span>
+                        <span class="text-yellow-400 font-bold" id="payment-pending">0</span>
+                    </div>
+                    <div class="w-full bg-slate-700 rounded-full h-2">
+                        <div class="bg-yellow-500 h-2 rounded-full transition-all" id="payment-bar-pending"
+                            style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workshop Summary -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 p-5 md:col-span-2">
+                <h4 class="text-sm font-bold text-white mb-4 flex items-center">
+                    <i class="fa-solid fa-chalkboard-user text-blue-400 mr-2"></i>
+                    Workshop Registrations
+                </h4>
+                <div class="grid grid-cols-2 gap-3" id="workshop-stats">
+                    <div class="bg-slate-700/50 rounded-lg p-3 text-center">
+                        <p class="text-slate-400 text-xs">Grand Opening</p>
+                        <p class="text-xl font-bold text-white" id="ws-opening">0</p>
+                    </div>
+                    <div class="bg-slate-700/50 rounded-lg p-3 text-center">
+                        <p class="text-slate-400 text-xs">Conference</p>
+                        <p class="text-xl font-bold text-white" id="ws-conference">0</p>
+                    </div>
+                    <div class="bg-slate-700/50 rounded-lg p-3 text-center">
+                        <p class="text-slate-400 text-xs">Workshop</p>
+                        <p class="text-xl font-bold text-white" id="ws-workshop">0</p>
+                    </div>
+                    <div class="bg-slate-700/50 rounded-lg p-3 text-center">
+                        <p class="text-slate-400 text-xs">Innovation</p>
+                        <p class="text-xl font-bold text-white" id="ws-innovation">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3 mb-6">
+            <button onclick="exportCSV('all')"
+                class="bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded-lg text-sm transition flex items-center">
+                <i class="fa-solid fa-file-csv mr-2"></i> Export All (CSV)
+            </button>
+            <button onclick="exportCSV('attendees')"
+                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm transition flex items-center">
+                <i class="fa-solid fa-download mr-2"></i> Export Attendees
+            </button>
+            <button onclick="exportCSV('vendors')"
+                class="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg text-sm transition flex items-center">
+                <i class="fa-solid fa-download mr-2"></i> Export Vendors
+            </button>
+            <button onclick="toggleNotifications()" id="notif-toggle"
+                class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm transition flex items-center">
+                <i class="fa-solid fa-bell mr-2"></i> Notifications: ON
+            </button>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl">
+            <div class="p-5 border-b border-slate-700 flex justify-between items-center">
+                <span class="font-bold flex items-center">
+                    <i class="fa-solid fa-list mr-2 text-teal-500"></i> ข้อมูลการลงทะเบียนล่าสุด
+                </span>
+                <div class="flex items-center gap-4">
+                    <!-- Search -->
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="ค้นหา..."
+                        class="text-sm bg-slate-700 border border-slate-600 rounded-lg px-3 py-1.5 text-white placeholder-slate-400 w-48">
+                    <!-- Filter -->
+                    <select id="filterType" onchange="filterTable()"
+                        class="text-sm bg-slate-700 border border-slate-600 rounded-lg px-3 py-1.5">
+                        <option value="all">All Types</option>
+                        <option value="attendee">Attendees</option>
+                        <option value="vendor">Vendors</option>
+                    </select>
+                    <span class="text-xs text-slate-500" id="last-updated">Updating...</span>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-slate-300" id="dataTable">
+                    <thead class="text-xs text-slate-400 uppercase bg-slate-900/50">
+                        <tr>
+                            <th class="px-4 py-3">Type</th>
+                            <th class="px-4 py-3">Name / Company</th>
+                            <th class="px-4 py-3">Email</th>
+                            <th class="px-4 py-3">Phone</th>
+                            <th class="px-4 py-3">Topic / Booth</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Time</th>
+                            <th class="px-4 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body">
+                        <tr>
+                            <td colspan="8" class="px-6 py-10 text-center text-slate-500">
+                                <i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i><br>
+                                กำลังโหลดข้อมูล...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 px-6 py-4 text-center text-slate-500 text-xs">
+        DentX Ecosystem Admin Dashboard &copy; 2026 | Nation University
+    </footer>
+
+    <!-- Config MUST be loaded before main module -->
+    <script src="firebase-config.js"></script>
+
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // ===== AUTH CHECK =====
+        if (sessionStorage.getItem('isAdmin') !== 'true') {
+            window.location.replace('index.html');
+        }
+
+        window.logout = () => {
+            sessionStorage.removeItem('isAdmin');
+            window.location.replace('index.html');
+        };
+
+        // ===== GLOBALS =====
+        let fbApp, fbDb, fbAuth, fbAppId;
+        let allRegistrations = [];
+        let notificationsEnabled = true;
+        let trendChart, breakdownChart;
+        let lastKnownCount = 0;
+
+        // ===== CHAT GLOBALS =====
+        let activeChatListener = null;
+        let activeMessageListener = null;
+        let currentChatId = null;
+
+        // ===== FIREBASE INIT =====
+        try {
+            if (window.firebaseConfig && window.firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                fbApp = firebase.initializeApp(window.firebaseConfig);
+                fbDb = firebase.firestore();
+                fbAuth = firebase.auth();
+                fbAppId = window.appId;
+
+                // Logging removed to prevent TypeError
+
+                fbAuth.signInAnonymously()
+                    .then(() => {
+                        console.log("Admin Firebase Auth OK");
+                    })
+                    .catch((error) => {
+                        console.warn("Anonymous Auth not available, continuing without auth:", error.code);
+                    });
+
+                // Initialize regardless of auth status (rules allow public access)
+                console.log("Admin Firebase initialized successfully");
+
+                // RBAC UI adjustments
+                const adminRole = sessionStorage.getItem('adminRole') || 'staff';
+                if (adminRole !== 'superadmin') {
+                    const revStat = document.getElementById('stat-revenue');
+                    if (revStat && revStat.closest('.admin-stat-card')) {
+                        revStat.closest('.admin-stat-card').style.display = 'none';
+                    }
+                }
+
+                initCharts();
+                loadAdminData();
+                initAdminChat();
+
+                // Show success toast
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Connected to Database'
+                });
+            } else {
+                console.warn("Invalid config, falling back to demo");
+                showDemoMode();
+            }
+        } catch (e) {
+            console.error("Firebase init failed:", e);
+            Swal.fire({
+                icon: 'error',
+                title: 'Initialization Error',
+                text: e.message
+            });
+            showDemoMode();
+        }
+
+        // ===== CHAT FUNCTIONS (GLOBAL) =====
+        function initAdminChat() {
+            if (!fbDb) return;
+
+            // Listen to all chats (ordered by last update)
+            activeChatListener = fbDb.collection('chats')
+                .orderBy('timestamp', 'desc')
+                .limit(20)
+                .onSnapshot(snapshot => {
+                    const chatList = document.getElementById('admin-chat-list');
+                    if (snapshot.empty) {
+                        chatList.innerHTML = '<div class="p-8 text-center text-slate-500 text-sm">No active chats.</div>';
+                        document.getElementById('active-chat-count').innerText = 0;
+                        return;
+                    }
+
+                    document.getElementById('active-chat-count').innerText = snapshot.size;
+                    let html = '';
+                    snapshot.forEach(doc => {
+                        const chat = doc.data();
+                        const isActive = currentChatId === doc.id;
+                        html += `
+                        <div onclick="openChat('${doc.id}', '${chat.userName || 'Guest'}')" 
+                             class="p-4 border-b border-slate-700 cursor-pointer hover:bg-slate-700/50 transition ${isActive ? 'bg-slate-700 border-l-4 border-l-teal-500' : ''}">
+                            <div class="flex justify-between items-start mb-1">
+                                <h5 class="font-bold text-slate-200 text-sm">${chat.userName || 'Guest User'}</h5>
+                                <span class="text-xs text-slate-500">${chat.timestamp ? new Date(chat.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 truncate">${chat.lastMessage || 'No messages'}</p>
+                            ${chat.unreadCount > 0 ? `<span class="inline-block mt-2 bg-red-500 text-white text-[10px] px-1.5 rounded-full">${chat.unreadCount}</span>` : ''}
+                        </div>
+                        `;
+                    });
+                    chatList.innerHTML = html;
+                });
+        }
+
+        function openChat(chatId, userName) {
+            if (currentChatId === chatId) return;
+            currentChatId = chatId;
+
+            // Update Header
+            document.getElementById('current-chat-user').innerText = userName;
+            document.getElementById('current-chat-id').innerText = 'ID: ' + chatId;
+
+            // Enable Input
+            document.getElementById('admin-chat-input').disabled = false;
+            document.getElementById('admin-chat-send').disabled = false;
+
+            // Clear previous message listener
+            if (activeMessageListener) activeMessageListener();
+
+            // Load Messages
+            const messagesContainer = document.getElementById('admin-chat-messages');
+            messagesContainer.innerHTML = '<div class="flex justify-center p-4"><i class="fa-solid fa-circle-notch fa-spin text-teal-500"></i></div>';
+
+            activeMessageListener = fbDb.collection('chats').doc(chatId).collection('messages')
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    messagesContainer.innerHTML = '';
+                    if (snapshot.empty) {
+                        messagesContainer.innerHTML = '<div class="text-center text-slate-500 text-sm mt-4">No messages yet.</div>';
+                        return;
+                    }
+
+                    snapshot.forEach(doc => {
+                        const msg = doc.data();
+                        const isAdmin = msg.sender === 'admin';
+                        messagesContainer.innerHTML += `
+                            <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'}">
+                                <div class="${isAdmin ? 'bg-teal-600 text-white rounded-tr-none' : 'bg-slate-700 text-slate-200 rounded-tl-none'} rounded-2xl py-2 px-4 text-sm shadow-sm max-w-[80%]">
+                                    ${msg.text}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                });
+
+            // Mark as read
+            fbDb.collection('chats').doc(chatId).update({ unreadCount: 0 });
+        }
+
+        async function handleAdminReply(e) {
+            e.preventDefault();
+            if (!currentChatId) return;
+
+            const input = document.getElementById('admin-chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+
+            try {
+                await fbDb.collection('chats').doc(currentChatId).collection('messages').add({
+                    text,
+                    sender: 'admin',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                await fbDb.collection('chats').doc(currentChatId).update({
+                    lastMessage: 'Admin: ' + text,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Reply error:", error);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to send reply' });
+            }
+        }
+
+        function showDemoMode() {
+            document.getElementById('admin-table-body').innerHTML = `
+                <tr><td colspan="8" class="px-6 py-10 text-center text-yellow-400 bg-yellow-900/10">
+                    <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i><br>
+                    Data Connection Failed: Demo Mode Active<br>
+                    <span class="text-xs text-slate-500">Check console logs for details.</span>
+                </td></tr>`;
+            loadDemoData();
+        }
+
+        // ===== CHARTS INIT =====
+        function initCharts() {
+            // Trend Chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: getLast7Days(),
+                    datasets: [{
+                        label: 'Registrations',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        borderColor: '#2EC4B6',
+                        backgroundColor: 'rgba(46, 196, 182, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#334155' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Breakdown Chart
+            const breakdownCtx = document.getElementById('breakdownChart').getContext('2d');
+            breakdownChart = new Chart(breakdownCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Grand Opening', 'Conference', 'Workshop', 'Innovation'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#F77F00', '#2EC4B6', '#8B5CF6', '#3B82F6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        function getLast7Days() {
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                days.push(d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }));
+            }
+            return days;
+        }
+
+        // ===== DATA LOADING =====
+        function loadAdminData() {
+            if (!fbDb) return;
+
+            // Listen to eventRegistrations (no orderBy to avoid field mismatch issues)
+            fbDb.collection('eventRegistrations').onSnapshot((snapshot) => {
+                const attendees = [];
+                snapshot.forEach((doc) => {
+                    attendees.push({ id: doc.id, ...doc.data(), type: 'attendee' });
+                });
+
+                // Listen to boothBookings (no orderBy to avoid field mismatch issues)
+                fbDb.collection('boothBookings').onSnapshot((boothSnapshot) => {
+                    const vendors = [];
+                    boothSnapshot.forEach((doc) => {
+                        vendors.push({ id: doc.id, ...doc.data(), type: 'vendor' });
+                    });
+
+                    allRegistrations = [...attendees, ...vendors].sort((a, b) => {
+                        // Sort by any timestamp field available
+                        const timeA = (a.registeredAt || a.bookedAt || a.timestamp)?.seconds || 0;
+                        const timeB = (b.registeredAt || b.bookedAt || b.timestamp)?.seconds || 0;
+                        return timeB - timeA;
+                    });
+
+                    // Check for new registrations
+                    if (lastKnownCount > 0 && allRegistrations.length > lastKnownCount) {
+                        showNotification('มีการลงทะเบียนใหม่!', allRegistrations[0]);
+                    }
+                    lastKnownCount = allRegistrations.length;
+
+                    updateDashboard(attendees, vendors);
+                });
+            });
+        }
+
+        function updateDashboard(attendees, vendors) {
+            const total = attendees.length + vendors.length;
+
+            // Update Stats
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-attendee').innerText = attendees.length;
+            document.getElementById('stat-vendor').innerText = vendors.length;
+
+            // Revenue Calculation
+            const attendeeRevenue = attendees.reduce((sum, a) => {
+                const topic = (a.eventType || a.topic || '').toLowerCase();
+                if (topic.includes('grand') || topic.includes('4,500')) return sum + 4500;
+                if (topic.includes('implant') || topic.includes('3,500')) return sum + 3500;
+                return sum; // Conference is free
+            }, 0);
+
+            const boothRevenue = vendors.reduce((sum, v) => {
+                const size = (v.boothType || v.booth_size || '').toLowerCase();
+                if (size.includes('s') || size.includes('small') || size.includes('2x2')) {
+                    return sum + 20000;
+                }
+                if (size.includes('m') || size.includes('medium') || size.includes('3x3')) {
+                    return sum + 35000;
+                }
+                if (size.includes('l') || size.includes('large') || size.includes('6x3')) {
+                    return sum + 60000;
+                }
+                return sum + 20000; // Default to small
+            }, 0);
+            const totalRevenue = attendeeRevenue + boothRevenue;
+            document.getElementById('stat-revenue').innerText = '฿' + totalRevenue.toLocaleString();
+
+            // Payment Status (Real Calculation)
+            // For attendees: status 'confirmed' = Paid (based on registration flow)
+            // For vendors: status 'pending' is default, assume unpaid until confirmed
+            // Or assume all database entries are 'pending' unless changed. 
+            // Simplifying: 'confirmed' or 'paid' = Paid. Everything else = Pending.
+            const paidItems = [...attendees, ...vendors].filter(i =>
+                (i.status || '').toLowerCase() === 'confirmed' ||
+                (i.status || '').toLowerCase() === 'paid'
+            );
+            const paidCount = paidItems.length;
+            const pendingCount = total - paidCount;
+
+            document.getElementById('payment-paid').innerText = paidCount;
+            document.getElementById('payment-pending').innerText = pendingCount;
+            document.getElementById('payment-bar-paid').style.width = (total > 0 ? (paidCount / total * 100) : 0) + '%';
+            document.getElementById('payment-bar-pending').style.width = (total > 0 ? (pendingCount / total * 100) : 0) + '%';
+            document.getElementById('stat-paid-count').innerText = `Paid: ${paidCount} | Pending: ${pendingCount}`;
+
+            // Workshop Stats
+            const topicCounts = { opening: 0, conference: 0, workshop: 0, innovation: 0 };
+            attendees.forEach(a => {
+                const topic = (a.eventType || a.topic || '').toLowerCase();
+                if (topic.includes('grand') || topic.includes('opening')) {
+                    topicCounts.opening++;
+                } else if (topic.includes('conference') || topic.includes('วิชาการ')) {
+                    topicCounts.conference++;
+                } else if (topic.includes('workshop') || topic.includes('hand-on')) {
+                    topicCounts.workshop++;
+                } else if (topic.includes('innovation') || topic.includes('helper')) {
+                    topicCounts.innovation++;
+                }
+            });
+            document.getElementById('ws-opening').innerText = topicCounts.opening;
+            document.getElementById('ws-conference').innerText = topicCounts.conference;
+            document.getElementById('ws-workshop').innerText = topicCounts.workshop;
+            document.getElementById('ws-innovation').innerText = topicCounts.innovation;
+
+            // Update Breakdown Chart
+            breakdownChart.data.datasets[0].data = [topicCounts.opening, topicCounts.conference, topicCounts.workshop, topicCounts.innovation];
+            breakdownChart.update();
+
+            // Update Trend Chart (group by date)
+            const trendData = [0, 0, 0, 0, 0, 0, 0];
+            const now = new Date();
+            [...attendees, ...vendors].forEach(r => {
+                const ts = r.registeredAt || r.bookedAt || r.timestamp;
+                if (ts?.seconds) {
+                    const regDate = new Date(ts.seconds * 1000);
+                    const daysAgo = Math.floor((now - regDate) / (1000 * 60 * 60 * 24));
+                    if (daysAgo >= 0 && daysAgo < 7) {
+                        trendData[6 - daysAgo]++;
+                    }
+                }
+            });
+            trendChart.data.datasets[0].data = trendData;
+            trendChart.update();
+
+            // Update Table
+            document.getElementById('last-updated').innerText = 'Updated: ' + new Date().toLocaleTimeString();
+            renderTable(allRegistrations);
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('admin-table-body');
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-10 text-center text-slate-500">No registrations found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => {
+                const status = item.status || 'pending';
+                let statusBadge = '';
+                let approveBtn = '';
+
+                // Badge Logic
+                if (status === 'confirmed' || status === 'approved') {
+                    statusBadge = '<span class="px-2 py-1 rounded text-xs bg-green-900/50 text-green-300 font-bold">APPROVED</span>';
+                } else if (status === 'waiting_approval') {
+                    statusBadge = '<span class="px-2 py-1 rounded text-xs bg-yellow-900/50 text-yellow-300 font-bold">WAITING</span>';
+                    approveBtn = `
+                        <button onclick="approveRecord('${item.id}', '${item.type}')" class="text-green-400 hover:text-green-300 mr-2" title="Approve Payment"><i class="fa-solid fa-check-circle"></i></button>
+                        <button onclick="rejectRecord('${item.id}', '${item.type}')" class="text-red-400 hover:text-red-300 mr-2" title="Reject Payment"><i class="fa-solid fa-times-circle"></i></button>
+                    `;
+                } else if (status === 'pending_payment') {
+                    statusBadge = '<span class="px-2 py-1 rounded text-xs bg-red-900/50 text-red-300 font-bold">UNPAID</span>';
+                } else {
+                    statusBadge = `<span class="px-2 py-1 rounded text-xs bg-gray-700 text-gray-300">${status.toUpperCase()}</span>`;
+                }
+
+                return `
+                <tr class="border-b border-slate-700 hover:bg-slate-800/50 transition" data-type="${item.type}">
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 rounded text-xs font-bold ${item.type === 'vendor' ? 'bg-orange-900/50 text-orange-300' : 'bg-teal-900/50 text-teal-300'}">
+                            ${item.type ? item.type.toUpperCase() : 'UNKNOWN'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 font-medium text-white">${item.userName || item.name || item.companyName || item.company || '-'}</td>
+                    <td class="px-4 py-3 text-slate-400">${item.userEmail || item.email || '-'}</td>
+                    <td class="px-4 py-3 text-slate-400">${item.phoneNumber || item.phone || item.contact || '-'}</td>
+                    <td class="px-4 py-3 text-slate-400">${item.eventType || item.topic || item.boothType || item.booth_size || '-'}</td>
+                    <td class="px-4 py-3">
+                        ${statusBadge}
+                    </td>
+                    <td class="px-4 py-3 text-slate-500 text-xs">${(item.registeredAt || item.bookedAt || item.timestamp) ? new Date((item.registeredAt || item.bookedAt || item.timestamp).seconds * 1000).toLocaleString('th-TH') : '-'}</td>
+                    <td class="px-4 py-3 flex items-center">
+                        ${approveBtn}
+                        <button onclick="viewDetail('${item.id}')" class="text-teal-400 hover:text-teal-300 mr-2" title="View">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        ${(sessionStorage.getItem('adminRole') || 'staff') === 'superadmin' ? `
+                        <button onclick="deleteRecord('${item.id}', '${item.type}')" class="text-red-400 hover:text-red-300" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>` : ''}
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        // ===== FILTER & SEARCH =====
+        function filterTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filterType = document.getElementById('filterType').value;
+
+            const filtered = allRegistrations.filter(item => {
+                const matchesSearch =
+                    (item.userName || item.name || '').toLowerCase().includes(searchTerm) ||
+                    (item.companyName || item.company || '').toLowerCase().includes(searchTerm) ||
+                    (item.userEmail || item.email || '').toLowerCase().includes(searchTerm) ||
+                    (item.phoneNumber || item.phone || '').toLowerCase().includes(searchTerm);
+                const matchesType = filterType === 'all' || item.type === filterType;
+                return matchesSearch && matchesType;
+            });
+
+            renderTable(filtered);
+        }
+
+        // ===== EXPORT CSV =====
+        function exportCSV(type) {
+            let data = allRegistrations;
+            if (type === 'attendees') data = allRegistrations.filter(r => r.type === 'attendee');
+            if (type === 'vendors') data = allRegistrations.filter(r => r.type === 'vendor');
+
+            const headers = ['Type', 'Name/Company', 'Email', 'Phone', 'Topic/Booth', 'Timestamp'];
+            const rows = data.map(item => [
+                item.type,
+                item.name || item.company || '',
+                item.email || item.userEmail || '',
+                item.phone || item.contact || '',
+                item.topic || item.booth_size || '',
+                item.timestamp ? new Date(item.timestamp.seconds * 1000).toISOString() : ''
+            ]);
+
+            const csvContent = [headers.join(','), ...rows.map(r => r.map(c => `"${c}"`).join(','))].join('\n');
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `dentx_${type}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+
+            Swal.fire({ icon: 'success', title: 'Exported!', text: `${data.length} records exported.`, timer: 2000, showConfirmButton: false });
+        }
+
+        // ===== NOTIFICATIONS =====
+        function toggleNotifications() {
+            notificationsEnabled = !notificationsEnabled;
+            const btn = document.getElementById('notif-toggle');
+            btn.innerHTML = `<i class="fa-solid fa-bell${notificationsEnabled ? '' : '-slash'} mr-2"></i> Notifications: ${notificationsEnabled ? 'ON' : 'OFF'}`;
+            btn.classList.toggle('bg-purple-600', notificationsEnabled);
+            btn.classList.toggle('bg-slate-600', !notificationsEnabled);
+        }
+
+        function showNotification(title, item) {
+            if (!notificationsEnabled) return;
+
+            const container = document.getElementById('notification-container');
+            const notif = document.createElement('div');
+            notif.className = 'notification-toast bg-teal-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-sm';
+            notif.innerHTML = `
+                <i class="fa-solid fa-bell text-xl"></i>
+                <div>
+                    <p class="font-bold">${title}</p>
+                    <p class="text-sm opacity-90">${item.name || item.company || 'New registration'}</p>
+                </div>
+                <button onclick="this.parentElement.remove()" class="ml-auto text-white/70 hover:text-white">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            `;
+            container.appendChild(notif);
+
+            // Play sound (optional)
+            try { new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgA').play(); } catch (e) { }
+
+            // Auto remove after 5 seconds
+            setTimeout(() => notif.remove(), 5000);
+        }
+
+        // ===== ACTIONS =====
+        function viewDetail(id) {
+            const item = allRegistrations.find(r => r.id === id);
+            if (!item) return;
+
+            // Check for paying slip
+            const slipHtml = item.paymentSlip
+                ? `<div class="mt-4 border-t border-slate-600 pt-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="font-bold text-teal-400">Payment Slip:</p>
+                        <a href="${item.paymentSlip}" target="_blank" class="text-xs bg-slate-700 hover:bg-slate-600 px-2 py-1 rounded text-white flex items-center gap-1">
+                            <i class="fa-solid fa-expand"></i> ขยายเต็มจอ
+                        </a>
+                    </div>
+                    <a href="${item.paymentSlip}" target="_blank">
+                        <img src="${item.paymentSlip}" class="w-full object-contain rounded border border-slate-600 hover:opacity-90 transition mx-auto cursor-zoom-in" style="max-height: 60vh;">
+                    </a>
+                   </div>`
+                : '';
+
+            const name = item.userName || item.name || item.companyName || item.contactPerson || '-';
+            const email = item.userEmail || item.email || '-';
+            const phone = item.phoneNumber || item.phone || item.contact || '-';
+            const topicOrBooth = item.eventType || item.topic || item.boothType || item.booth_size || '-';
+
+            // Format time for easy checking in bank apps
+            const timeField = item.registeredAt || item.bookedAt || item.paidAt;
+            const timeStr = timeField ? new Date(timeField.seconds * 1000).toLocaleString('th-TH') : '-';
+            const dateOnly = timeField ? new Date(timeField.seconds * 1000).toLocaleDateString('th-TH') : '';
+            const timeOnly = timeField ? new Date(timeField.seconds * 1000).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : '';
+
+            const amountStr = item.amount ? item.amount.toLocaleString() : 'N/A';
+
+            Swal.fire({
+                title: item.type === 'vendor' ? 'Vendor Details' : 'Attendee Details',
+                html: `
+                    <div class="text-left text-sm space-y-3">
+                        <div class="grid grid-cols-2 gap-2 bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <div>
+                                <p class="text-xs text-slate-400">Status</p>
+                                <p class="uppercase font-bold ${item.status === 'confirmed' || item.status === 'approved' || item.status === 'paid' ? 'text-green-400' : item.status === 'waiting_approval' || item.status === 'pending_payment' ? 'text-yellow-400' : item.status === 'rejected' ? 'text-red-400' : 'text-slate-400'}">${item.status || 'pending'}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Amount (THB)</p>
+                                <div class="flex items-center gap-2">
+                                    <p class="font-bold text-lg text-white">${amountStr}</p>
+                                    ${item.amount ? `<button onclick="navigator.clipboard.writeText('${item.amount}')" class="text-slate-400 hover:text-teal-400" title="Copy Amount"><i class="fa-regular fa-copy"></i></button>` : ''}
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Transfer Time</p>
+                                <div class="flex items-center gap-2">
+                                    <p class="font-bold text-white">${timeOnly} <span class="text-xs font-normal text-slate-400">(${dateOnly})</span></p>
+                                    <button onclick="navigator.clipboard.writeText('${timeOnly}')" class="text-slate-400 hover:text-teal-400" title="Copy Time"><i class="fa-regular fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p><b>ID:</b> <span class="text-slate-400">${item.id}</span></p>
+                        <p><b>Name:</b> <span class="text-slate-300">${name}</span></p>
+                        <p><b>Email:</b> <span class="text-slate-300">${email}</span></p>
+                        <p><b>Phone:</b> <span class="text-slate-300">${phone}</span></p>
+                        <p><b>Topic/Booth:</b> <span class="text-teal-300 font-bold">${topicOrBooth}</span></p>
+                        ${item.taxId ? `<p><b>Tax ID:</b> ${item.taxId}</p>` : ''}
+                        
+                        ${slipHtml}
+                    </div>
+                `,
+                confirmButtonColor: '#2EC4B6',
+                background: '#0f172a',
+                color: '#fff',
+                width: '600px'
+            });
+        }
+
+        window.approveRecord = (id, type) => {
+            Swal.fire({
+                title: 'Approve Payment?',
+                text: "Confirm that payment has been received.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#2EC4B6',
+                confirmButtonText: 'Yes, Approve',
+                background: '#0f172a',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed && fbDb) {
+                    const collection = type === 'vendor' ? 'boothBookings' : 'eventRegistrations';
+
+                    fbDb.collection(collection).doc(id).update({
+                        status: type === 'vendor' ? 'approved' : 'confirmed', // Vendors use 'approved'?, Attendees 'confirmed'
+                        paymentStatus: 'paid',
+                        approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Approved!',
+                            text: 'Record has been approved.',
+                            timer: 1500,
+                            showConfirmButton: false,
+                            background: '#0f172a',
+                            color: '#fff'
+                        });
+                        loadAdminData();
+                    }).catch(err => {
+                        console.error("Approve error", err);
+                        Swal.fire({ icon: 'error', title: 'Error', text: err.message });
+                    });
+                }
+            });
+        };
+
+        window.rejectRecord = (id, type) => {
+            Swal.fire({
+                title: 'Reject Payment?',
+                text: "This will require the user to upload a new slip.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Yes, Reject',
+                background: '#0f172a',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed && fbDb) {
+                    const collection = type === 'vendor' ? 'boothBookings' : 'eventRegistrations';
+
+                    fbDb.collection(collection).doc(id).update({
+                        status: 'rejected',
+                        paymentStatus: 'rejected',
+                        rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Rejected',
+                            text: 'Record has been rejected.',
+                            timer: 1500,
+                            showConfirmButton: false,
+                            background: '#0f172a',
+                            color: '#fff'
+                        });
+                        loadAdminData();
+                    }).catch(err => {
+                        console.error("Reject error", err);
+                        Swal.fire({ icon: 'error', title: 'Error', text: err.message });
+                    });
+                }
+            });
+        };
+
+        function deleteRecord(id, type) {
+            Swal.fire({
+                title: 'Delete this record?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed && fbDb) {
+                    const collection = type === 'vendor' ? 'boothBookings' : 'eventRegistrations';
+                    fbDb.collection(collection).doc(id).delete().then(() => {
+                        Swal.fire({ icon: 'success', title: 'Deleted!', timer: 1500, showConfirmButton: false });
+                    }).catch(err => {
+                        Swal.fire({ icon: 'error', title: 'Error', text: err.message });
+                    });
+                }
+            });
+        }
+
+        // ===== DEMO DATA =====
+        function loadDemoData() {
+            const demoAttendees = [
+                { id: '1', type: 'attendee', name: 'นพ.สมชาย ใจดี', email: 'somchai@email.com', phone: '081-234-5678', topic: 'Grand Opening (4,500.-)', timestamp: { seconds: Date.now() / 1000 - 3600 } },
+                { id: '2', type: 'attendee', name: 'ทพญ.สุดา รักษ์ยิ้ม', email: 'suda@email.com', phone: '089-876-5432', topic: '3D Printing Workshop', timestamp: { seconds: Date.now() / 1000 - 7200 } },
+                { id: '3', type: 'attendee', name: 'นายวิชัย นวัตกรรม', email: 'wichai@email.com', phone: '062-111-2222', topic: 'AI in Dentistry', timestamp: { seconds: Date.now() / 1000 - 86400 } },
+            ];
+            const demoVendors = [
+                { id: '4', type: 'vendor', company: 'DentalTech Co.', contact: '02-123-4567', email: 'info@dentaltech.com', booth_size: 'Premium Booth', timestamp: { seconds: Date.now() / 1000 - 172800 } },
+                { id: '5', type: 'vendor', company: 'SmilePro Ltd.', contact: '02-987-6543', email: 'sales@smilepro.com', booth_size: 'Standard Booth', timestamp: { seconds: Date.now() / 1000 - 259200 } },
+            ];
+
+            allRegistrations = [...demoAttendees, ...demoVendors];
+            initCharts();
+            updateDashboard(demoAttendees, demoVendors);
+        }
+
+        // ===== BREAKDOWN CHART TOGGLE =====
+        function updateBreakdownChart() {
+            const type = document.getElementById('chartTypeSelect').value;
+
+            if (type === 'topic') {
+                const topicCounts = { opening: 0, conference: 0, workshop: 0, innovation: 0 };
+                allRegistrations.filter(r => r.type === 'attendee').forEach(a => {
+                    const topic = (a.eventType || a.topic || '').toLowerCase();
+                    if (topic.includes('grand') || topic.includes('opening')) {
+                        topicCounts.opening++;
+                    } else if (topic.includes('conference') || topic.includes('วิชาการ')) {
+                        topicCounts.conference++;
+                    } else if (topic.includes('workshop') || topic.includes('hand-on')) {
+                        topicCounts.workshop++;
+                    } else if (topic.includes('innovation') || topic.includes('helper')) {
+                        topicCounts.innovation++;
+                    }
+                });
+                breakdownChart.data.labels = ['Grand Opening', 'Conference', 'Workshop', 'Innovation'];
+                breakdownChart.data.datasets[0].data = [topicCounts.opening, topicCounts.conference, topicCounts.workshop, topicCounts.innovation];
+            } else {
+                const boothCounts = { standard: 0, premium: 0, corner: 0 };
+                allRegistrations.filter(r => r.type === 'vendor').forEach(v => {
+                    const size = (v.booth_size || '').toLowerCase();
+                    if (size.includes('standard')) boothCounts.standard++;
+                    else if (size.includes('premium')) boothCounts.premium++;
+                    else if (size.includes('corner')) boothCounts.corner++;
+                });
+                breakdownChart.data.labels = ['Standard', 'Premium', 'Corner'];
+                breakdownChart.data.datasets[0].data = [boothCounts.standard, boothCounts.premium, boothCounts.corner];
+            }
+            breakdownChart.update();
+        }
+    </script>
+</body>
+
+</html>

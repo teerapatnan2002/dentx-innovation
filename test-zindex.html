@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Z-Index Fix</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* This should match the rule in index.html */
+        .swal2-container {
+            z-index: 999999 !important;
+        }
+
+        .test-overlay {
+            position: fixed;
+            inset: 0;
+            background: black;
+            opacity: 0.8;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background: #2EC4B6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        button:hover {
+            background: #25a596;
+        }
+
+        .info {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .status {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="info">
+        <h1>🔍 ทดสอบ Z-Index Fix</h1>
+        <p>หน้านี้จะทดสอบว่า SweetAlert แสดงด้านบนสุดหรือไม่</p>
+
+        <div id="status" class="status"></div>
+
+        <button onclick="testZIndex()">ทดสอบ Z-Index</button>
+        <button onclick="checkCSS()">ตรวจสอบ CSS</button>
+
+        <h3>วิธีใช้:</h3>
+        <ol>
+            <li>กดปุ่ม "ทดสอบ Z-Index"</li>
+            <li>จะมี overlay สีดำปรากฏขึ้น (z-index: 99999)</li>
+            <li>หลังจากนั้น SweetAlert จะปรากฏขึ้น</li>
+            <li><strong>ถ้า SweetAlert แสดงด้านบน overlay = แก้ไขสำเร็จ ✅</strong></li>
+            <li><strong>ถ้า SweetAlert อยู่ด้านหลัง overlay = ยังมีปัญหา ❌</strong></li>
+        </ol>
+
+        <h3>ถ้ายังมีปัญหา:</h3>
+        <ol>
+            <li>กด <kbd>Cmd+Shift+R</kbd> (Mac) หรือ <kbd>Ctrl+Shift+R</kbd> (Windows)</li>
+            <li>ลบ Cache และ Cookies</li>
+            <li>ลองใช้ Incognito/Private Window</li>
+        </ol>
+    </div>
+
+    <script>
+        function testZIndex() {
+            // Create test overlay (similar to QR Zoom)
+            const overlay = document.createElement('div');
+            overlay.className = 'test-overlay';
+            overlay.innerHTML = 'Test Overlay (z-index: 99999)<br><small>คลิกที่ใดก็ได้เพื่อปิด</small>';
+            overlay.onclick = () => overlay.remove();
+            document.body.appendChild(overlay);
+
+            // Show SweetAlert after a delay
+            setTimeout(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ทดสอบสำเร็จ!',
+                    html: 'ถ้าคุณเห็นข้อความนี้ชัดเจน<br>แสดงว่า Z-Index ทำงานถูกต้อง!',
+                    confirmButtonText: 'ปิด',
+                    confirmButtonColor: '#2EC4B6'
+                }).then(() => {
+                    overlay.remove();
+                });
+            }, 300);
+        }
+
+        function checkCSS() {
+            const container = document.querySelector('.swal2-container');
+            let message = '';
+
+            if (!container) {
+                // Trigger a dummy alert first
+                Swal.fire({ title: 'Testing...', timer: 100 });
+                setTimeout(() => {
+                    const cont = document.querySelector('.swal2-container');
+                    if (cont) {
+                        const zIndex = window.getComputedStyle(cont).zIndex;
+                        if (zIndex === '999999') {
+                            document.getElementById('status').className = 'status success';
+                            document.getElementById('status').innerHTML = '✅ CSS โหลดถูกต้อง: z-index = 999999';
+                        } else {
+                            document.getElementById('status').className = 'status error';
+                            document.getElementById('status').innerHTML = `❌ CSS ไม่ถูกต้อง: z-index = ${zIndex}<br>กรุณา Hard Refresh (Cmd+Shift+R)`;
+                        }
+                    }
+                }, 500);
+            } else {
+                const zIndex = window.getComputedStyle(container).zIndex;
+                if (zIndex === '999999') {
+                    document.getElementById('status').className = 'status success';
+                    document.getElementById('status').innerHTML = '✅ CSS โหลดถูกต้อง: z-index = 999999';
+                } else {
+                    document.getElementById('status').className = 'status error';
+                    document.getElementById('status').innerHTML = `❌ CSS ไม่ถูกต้อง: z-index = ${zIndex}<br>กรุณา Hard Refresh (Cmd+Shift+R)`;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

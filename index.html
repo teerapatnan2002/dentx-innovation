@@ -1,0 +1,3167 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dent X Ecosystem | Nation University</title>
+    <!-- SEO & Open Graph Meta Tags -->
+    <meta name="description"
+        content="งานสัมมนาทันตกรรมที่ยิ่งใหญ่ที่สุดแห่งปี DentX Innovation Center โดยมหาวิทยาลัยเนชั่น">
+    <meta property="og:title" content="Dent X Ecosystem | Nation University">
+    <meta property="og:description"
+        content="ลงทะเบียนร่วมงาน DentX Innovation Center งานแสดงนวัตกรรมและเทคโนโลยีทางทันตกรรม">
+    <meta property="og:image"
+        content="https://www.online4dent.com:8443/uploads/1770188201458-00-0FE80E49-8777-46F7-8AD3-6ECEA97229CC.png">
+    <meta property="og:type" content="website">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Added for Admin Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script> <!-- Slip QR Scanner -->
+
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* Modal Transitions */
+        .modal {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* SweetAlert Global Override - Always show above payment modal and QR zoom */
+        .swal2-container {
+            z-index: 999999 !important;
+        }
+
+        /* Tab Design */
+        .tab-btn {
+            padding: 10px 0;
+            border-bottom: 2px solid transparent;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: #334155;
+            background-color: #f8fafc;
+        }
+
+        .tab-btn.active-attendee {
+            border-bottom-color: #2563EB;
+            color: #2563EB;
+            font-weight: 600;
+            background-color: #eff6ff;
+        }
+
+        .tab-btn.active-vendor {
+            border-bottom-color: #16a34a;
+            color: #16a34a;
+            font-weight: 600;
+            background-color: #f0fdf4;
+        }
+
+        .tab-btn.active-login {
+            border-bottom-color: #9333ea;
+            color: #9333ea;
+            font-weight: 600;
+            background-color: #faf5ff;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 0%;
+            transition: width 1.5s ease-in-out;
+        }
+
+        /* Locked Content */
+        .locked-blur {
+            filter: blur(4px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .is-member .locked-blur {
+            filter: none;
+            pointer-events: auto;
+        }
+
+        .is-member .lock-overlay {
+            display: none;
+        }
+
+
+        /* ====== GLASSMORPHISM CARDS ====== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(20, 184, 166, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ====== GRADIENT TEXT ====== */
+        .text-gradient {
+            background: linear-gradient(135deg, #2EC4B6 0%, #F77F00 50%, #2EC4B6 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientText 3s ease infinite;
+        }
+
+        @keyframes gradientText {
+
+            0%,
+            100% {
+                background-position: 0% center;
+            }
+
+            50% {
+                background-position: 200% center;
+            }
+        }
+
+        /* ====== ENHANCED BUTTON EFFECTS ====== */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                    transparent,
+                    transparent 40%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    transparent 60%,
+                    transparent);
+            transform: rotate(45deg);
+            animation: shimmerBtn 3s infinite;
+        }
+
+        @keyframes shimmerBtn {
+            0% {
+                left: -200%;
+            }
+
+            100% {
+                left: 200%;
+            }
+        }
+
+        /* ====== CARD TILT EFFECT ====== */
+        .card-tilt {
+            transition: transform 0.4s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .card-tilt:hover {
+            transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateY(-8px);
+        }
+
+        /* ====== FLOATING DENTAL ICONS ====== */
+        @keyframes floatDental {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(15deg);
+                opacity: 0.6;
+            }
+        }
+
+        .dental-float {
+            animation: floatDental 6s ease-in-out infinite;
+        }
+
+        /* ====== SCROLL INDICATOR ====== */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollBounce {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(10px);
+                opacity: 0.5;
+            }
+        }
+
+        /* ====== SECTION DIVIDERS ====== */
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #2EC4B6, #F77F00, #2EC4B6, transparent);
+            border-radius: 2px;
+            margin: 40px auto;
+            width: 80%;
+            max-width: 600px;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 selection:bg-teal-500 selection:text-white">
+
+    <!-- SCROLL PROGRESS INDICATOR -->
+    <div id="scroll-progress"
+        class="fixed top-0 left-0 h-1 bg-gradient-to-r from-teal-500 via-orange-500 to-teal-500 z-[60] transition-all duration-100"
+        style="width: 0%"></div>
+
+    <!-- NAVIGATION -->
+    <!-- NAVIGATION -->
+    <nav id="navbar" class="sticky top-0 z-50 glass-panel border-b border-slate-200/50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-3 group">
+                <img src="dentx_logo_final.png" alt="Dent X Logo"
+                    class="h-14 group-hover:scale-105 transition-transform duration-300">
+            </a>
+
+            <div class="hidden xl:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                <a href="#conference"
+                    class="hover:text-teal-600 transition relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-teal-500 after:transition-all hover:after:w-full"
+                    data-i18n="nav_academic">วิชาการ</a>
+                <a href="#workshop"
+                    class="hover:text-teal-600 transition relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-teal-500 after:transition-all hover:after:w-full"
+                    data-i18n="nav_workshop">Workshop</a>
+                <a href="#elearning"
+                    class="hover:text-teal-600 transition relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-teal-500 after:transition-all hover:after:w-full"
+                    data-i18n="nav_elearning">E-Learning</a>
+                <a href="#incubator"
+                    class="hover:text-teal-600 transition relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-teal-500 after:transition-all hover:after:w-full"
+                    data-i18n="nav_incubator">Incubator</a>
+
+                <!-- Language Switcher -->
+                <div
+                    class="relative z-50 flex items-center text-xs border border-slate-200 rounded-lg overflow-hidden p-1 bg-slate-100/50">
+                    <button onclick="switchLanguage('th')" id="lang-btn-th"
+                        class="px-3 py-1 rounded-md bg-white shadow-sm text-slate-800 font-bold transition">TH</button>
+                    <button onclick="switchLanguage('en')" id="lang-btn-en"
+                        class="px-3 py-1 rounded-md hover:bg-white/50 text-slate-500 transition">EN</button>
+                </div>
+
+                <div class="h-6 w-px bg-slate-200"></div>
+
+                <button onclick="openAccessModal('login')" id="nav-login-btn"
+                    class="hover:text-teal-600 px-4 py-2 rounded-full hover:bg-slate-50 transition flex items-center font-semibold">
+                    <i class="fa-regular fa-user mr-2"></i> <span data-i18n="nav_login">เข้าสู่ระบบ</span>
+                </button>
+
+                <button onclick="openAccessModal('attendee')"
+                    class="bg-gradient-to-r from-teal-500 to-teal-400 text-white px-6 py-2.5 rounded-full shadow-lg shadow-teal-500/30 hover:shadow-teal-500/40 hover:-translate-y-0.5 transition-all duration-300 font-bold btn-shimmer">
+                    <span data-i18n="nav_register">ลงทะเบียนเข้างาน</span>
+                </button>
+            </div>
+
+            <button class="xl:hidden text-slate-600 text-2xl"
+                onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden xl:hidden bg-white border-t border-slate-100 p-4 space-y-3 shadow-xl">
+            <a href="#conference" class="block text-slate-600 hover:text-teal-600">ประชุมวิชาการ</a>
+            <a href="#workshop" class="block text-slate-600 hover:text-teal-600" data-i18n="nav_workshop">Workshop</a>
+            <a href="#elearning" class="block text-slate-600 hover:text-teal-600"
+                data-i18n="nav_elearning">E-Learning</a>
+            <a href="#incubator" class="block text-slate-600 hover:text-teal-600"
+                data-i18n="nav_incubator">Incubator</a>
+            <button onclick="openAccessModal('login')"
+                class="block w-full text-left text-slate-600 border-t border-slate-100 pt-2 mt-2">เข้าสู่ระบบ</button>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+
+
+    <!-- Hero Section -->
+    <section id="home"
+        class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-teal-50">
+        <!-- Background Elements -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-teal-100/20 blur-3xl rounded-bl-[200px] pointer-events-none">
+        </div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-orange-100/30 blur-3xl rounded-tr-full pointer-events-none">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Text Content -->
+                <div class="space-y-8 animate-slide-in-left order-2 lg:order-1 relative z-20">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200 shadow-sm text-teal-600 text-sm font-medium hover:shadow-md transition-shadow cursor-default">
+                        <span class="relative flex h-3 w-3">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-teal-500"></span>
+                        </span>
+                        Nation University Dental Innovation
+                    </div>
+
+                    <div class="relative">
+                        <h1 class="text-7xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-teal-400 tracking-tighter mb-2"
+                            style="filter: drop-shadow(0 4px 6px rgba(45, 212, 191, 0.2));">
+                            DentX
+                        </h1>
+                        <h2 class="text-3xl md:text-5xl font-bold text-slate-800 leading-tight">
+                            อนาคตแห่ง <span class="text-teal-500">ทันตกรรมดิจิทัล</span>
+                        </h2>
+                    </div>
+
+                    <p
+                        class="text-lg text-slate-600 max-w-lg leading-relaxed font-light border-l-4 border-teal-500 pl-4">
+                        สัมผัสประสบการณ์การเรียนรู้และเทคโนโลยีทันตกรรมสมัยใหม่ ที่รวมนวัตกรรม AI และ
+                        Hardware ล่าสุดไว้ในที่เดียว เพื่อยกระดับวิชาชีพทันตกรรมสู่อนาคต
+                    </p>
+
+                    <!-- Stats / Social Proof -->
+                    <div class="pt-8 flex gap-8 border-t border-slate-200/60 mt-8">
+                        <div>
+                            <p class="text-3xl font-bold text-slate-800">500+</p>
+                            <p class="text-sm text-slate-500">ผู้เข้าร่วมงาน</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-bold text-slate-800">20+</p>
+                            <p class="text-sm text-slate-500">วิทยากรเชี่ยวชาญ</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-bold text-slate-800">10+</p>
+                            <p class="text-sm text-slate-500">บูธนวัตกรรม</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Image -->
+                <div
+                    class="relative animate-slide-in-right hidden lg:flex justify-center items-center order-1 lg:order-2">
+                    <div class="relative w-full max-w-lg aspect-square">
+                        <!-- Glow Effect -->
+                        <div class="absolute inset-0 bg-teal-500/10 blur-[100px] rounded-full animate-pulse-slow"></div>
+
+                        <!-- Main Image -->
+                        <img src="hero_dental_abstract.png" alt="Dental Innovation 3D"
+                            class="relative z-10 w-full h-auto drop-shadow-2xl dental-float hover:scale-105 transition-transform duration-700 ease-out">
+
+                        <!-- Floating Elements (Simulated) -->
+                        <div class="absolute -top-10 -right-10 z-20 bg-white/90 backdrop-blur p-4 rounded-2xl shadow-lg border border-slate-100 animate-bounce-slow"
+                            style="animation-delay: 1s;">
+                            <i class="fa-solid fa-tooth text-teal-500 text-2xl"></i>
+                        </div>
+                        <div class="absolute bottom-20 -left-10 z-20 bg-white/90 backdrop-blur p-3 rounded-2xl shadow-lg border border-slate-100 animate-bounce-slow"
+                            style="animation-delay: 2s;">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-xs font-bold text-slate-600">AI Analysis Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- WAVE DIVIDER -->
+    <!-- WAVE DIVIDER -->
+    <div class="relative h-16 overflow-hidden bg-white">
+        <svg class="absolute bottom-0 w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path
+                d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V120H0Z"
+                class="fill-slate-50" opacity=".5"></path>
+            <path
+                d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z"
+                class="fill-slate-50" opacity=".3"></path>
+            <path
+                d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"
+                class="fill-slate-50"></path>
+        </svg>
+    </div>
+
+    <!-- STATISTICS COUNTER SECTION (Floating Cards) -->
+    <section class="py-12 relative -mt-20 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Stat 1 -->
+                <div class="glass-card p-6 rounded-2xl text-center group">
+                    <div
+                        class="w-12 h-12 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-teal-500 transition-colors duration-300">
+                        <i
+                            class="fa-solid fa-robot text-teal-500 text-xl group-hover:text-white transition-colors duration-300"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 mb-1 group-hover:text-teal-600 transition-colors">50+
+                    </div>
+                    <div class="text-xs text-slate-500 font-bold tracking-wider uppercase">AI Projects</div>
+                </div>
+
+                <!-- Stat 2 -->
+                <div class="glass-card p-6 rounded-2xl text-center group">
+                    <div
+                        class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500 transition-colors duration-300">
+                        <i
+                            class="fa-solid fa-thumbs-up text-blue-500 text-xl group-hover:text-white transition-colors duration-300"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 mb-1 group-hover:text-blue-600 transition-colors">100%
+                    </div>
+                    <div class="text-xs text-slate-500 font-bold tracking-wider uppercase">Satisfaction</div>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="glass-card p-6 rounded-2xl text-center group">
+                    <div
+                        class="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-purple-500 transition-colors duration-300">
+                        <i
+                            class="fa-solid fa-headset text-purple-500 text-xl group-hover:text-white transition-colors duration-300"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 mb-1 group-hover:text-purple-600 transition-colors">
+                        24/7</div>
+                    <div class="text-xs text-slate-500 font-bold tracking-wider uppercase">Support</div>
+                </div>
+
+                <!-- Stat 4 -->
+                <div class="glass-card p-6 rounded-2xl text-center group">
+                    <div
+                        class="w-12 h-12 bg-pink-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-pink-500 transition-colors duration-300">
+                        <i
+                            class="fa-solid fa-trophy text-pink-500 text-xl group-hover:text-white transition-colors duration-300"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 mb-1 group-hover:text-pink-600 transition-colors">Top
+                        1</div>
+                    <div class="text-xs text-slate-500 font-bold tracking-wider uppercase">Award</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INNOVATION SHOWCASE -->
+    <!-- 0. UPCOMING CONFERENCE (New) -->
+    <section id="upcoming-conference" class="py-16 bg-white relative overflow-hidden border-t border-slate-100">
+        <!-- Background Effects -->
+        <div
+            class="absolute top-0 left-0 w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-3xl pointer-events-none">
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col lg:flex-row gap-12 items-center">
+                <!-- Event Info -->
+                <div class="lg:w-2/3 w-full">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span
+                            class="text-xs font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full border border-teal-100"
+                            data-i18n="conf_badge_grand">GRAND
+                            OPENING</span>
+                        <span
+                            class="text-xs font-bold text-orange-500 bg-orange-50 px-3 py-1 rounded-full border border-orange-100"
+                            data-i18n="conf_badge_onsite">ONSITE</span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-slate-900 mb-4 leading-snug" data-i18n="conf_title">Face-Forward
+                        Soft Tissue
+                        Driven Orthodontics & Digital Dentistry Paradigm</h3>
+
+                    <div class="grid md:grid-cols-2 gap-4 mb-6">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-teal-50 p-2 rounded-lg text-teal-500">
+                                <i class="fa-regular fa-calendar-check text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 font-bold uppercase" data-i18n="conf_date_label">
+                                    วันที่จัดงาน</p>
+                                <p class="text-slate-800 font-medium" data-i18n="conf_date_val">วันศุกร์ที่ 20 มีนาคม
+                                    2569</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-teal-50 p-2 rounded-lg text-teal-500">
+                                <i class="fa-solid fa-location-dot text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 font-bold uppercase" data-i18n="conf_loc_label">สถานที่
+                                </p>
+                                <p class="text-slate-800 font-medium" data-i18n="conf_loc_val">ศูนย์ DentX ม.เนชั่น
+                                    เชียงใหม่</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Countdown Timer -->
+                    <div class="glass-card border border-orange-100/50 rounded-2xl p-6 mb-8 relative overflow-hidden">
+                        <div
+                            class="absolute top-0 right-0 w-20 h-20 bg-orange-500/10 rounded-full blur-xl -mr-10 -mt-10">
+                        </div>
+                        <p class="text-center text-orange-500 font-bold text-sm mb-4 tracking-wider uppercase">
+                            <i class="fa-solid fa-clock mr-2 animate-pulse"></i><span data-i18n="count_title">Count
+                                Down</span>
+                        </p>
+                        <div id="countdown-timer" class="flex justify-center gap-3 sm:gap-6">
+                            <div class="text-center">
+                                <div id="countdown-days"
+                                    class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-orange-600 to-red-600 bg-white shadow-sm rounded-xl px-4 py-3 min-w-[70px] border border-orange-50">
+                                    --</div>
+                                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-wider"
+                                    data-i18n="time_days">Days</p>
+                            </div>
+                            <div class="text-center">
+                                <div id="countdown-hours"
+                                    class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-orange-600 to-red-600 bg-white shadow-sm rounded-xl px-4 py-3 min-w-[70px] border border-orange-50">
+                                    --</div>
+                                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-wider"
+                                    data-i18n="time_hrs">Hrs</p>
+                            </div>
+                            <div class="text-center">
+                                <div id="countdown-mins"
+                                    class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-orange-600 to-red-600 bg-white shadow-sm rounded-xl px-4 py-3 min-w-[70px] border border-orange-50">
+                                    --</div>
+                                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-wider"
+                                    data-i18n="time_mins">Mins</p>
+                            </div>
+                            <div class="text-center">
+                                <div id="countdown-secs"
+                                    class="text-3xl sm:text-4xl font-bold text-orange-500 bg-white shadow-sm rounded-xl px-4 py-3 min-w-[70px] border border-orange-50 animate-pulse-glow">
+                                    --</div>
+                                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-wider"
+                                    data-i18n="time_secs">Secs</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="font-bold text-slate-800 mb-3 border-b border-slate-100 pb-2 inline-block"
+                        data-i18n="highlight_title">
+                        หัวข้อการบรรยายไฮไลท์</h4>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check-circle text-teal-500 mt-1"></i>
+                            <span class="text-slate-600 text-sm" data-i18n="highlight_1">Pediatric Orthodontic Devices
+                                and
+                                Myofunctional Appliances</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check-circle text-teal-500 mt-1"></i>
+                            <span class="text-slate-600 text-sm" data-i18n="highlight_2">Clear Aligners and Digital
+                                Dentistry</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check-circle text-teal-500 mt-1"></i>
+                            <span class="text-slate-600 text-sm" data-i18n="highlight_3">Digital Dentistry and
+                                Artificial
+                                Intelligence (AI)</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="openAccessModal('attendee')"
+                            class="px-8 py-3 bg-teal-500 text-white font-bold rounded-xl hover:bg-teal-600 transition shadow-md"
+                            data-i18n="btn_reg_price">
+                            ลงทะเบียน (4,500 บาท)
+                        </button>
+                        <a href="tel:0806369818"
+                            class="px-6 py-3 border border-teal-500 text-teal-600 font-bold rounded-xl hover:bg-teal-50 transition flex items-center">
+                            <i class="fa-solid fa-phone mr-2"></i> <span data-i18n="btn_call">080-6369818</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Poster Image -->
+                <div class="lg:w-1/3 w-full">
+                    <div class="aspect-[3/4] bg-slate-50 rounded-xl overflow-hidden shadow-lg border border-slate-100 relative group hover:scale-[1.02] transition duration-300 cursor-pointer"
+                        onclick="openImageModal('poster_face_forward.jpg')">
+                        <img src="poster_face_forward.jpg" alt="Face-Forward Event Poster"
+                            class="w-full h-full object-cover">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end justify-center p-6">
+                            <span class="text-white font-bold bg-orange-500 px-4 py-2 rounded-full text-sm shadow-lg"
+                                data-i18n="poster_more">รายละเอียดเพิ่มเติม</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 1. ACADEMIC CONFERENCE -->
+    <!-- 1. ACADEMIC CONFERENCE -->
+    <section id="conference" class="py-16 bg-slate-50 relative overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex items-center mb-8 border-l-4 border-teal-500 pl-4">
+                <h2 class="text-2xl font-bold text-slate-800" data-i18n="section_academic">ประชุมวิชาการ
+                    (Academic)</h2>
+            </div>
+            <div class="glass-panel rounded-3xl p-8 md:p-12 relative overflow-hidden">
+                <!-- Decorative Circle -->
+                <div
+                    class="absolute -top-20 -right-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none">
+                </div>
+                <div class="flex flex-col lg:flex-row gap-8 items-start">
+                    <!-- Posters Column -->
+                    <div class="w-full lg:w-2/5 flex flex-col gap-4">
+                        <img src="poster_grand_opening.jpg" alt="Grand Opening" onclick="openQRZoom(this.src)"
+                            class="w-full rounded-xl shadow-md border border-slate-100 cursor-pointer hover:opacity-80 transition hover:shadow-lg">
+                    </div>
+
+                    <!-- Content Column -->
+                    <div class="flex-1 space-y-8">
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <span
+                                    class="text-xs font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full border border-teal-100">✨
+                                    GRAND OPENING</span>
+                                <span
+                                    class="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-100">20
+                                    MAR 2026</span>
+                            </div>
+
+                            <h3 class="text-3xl font-bold text-slate-800 leading-tight mb-2">
+                                GRAND OPENING ONSITE <br>
+                                <span class="text-teal-600">Face-Forward Soft Tissue Driven Orthodontics & Digital
+                                    Dentistry Paradigm</span>
+                            </h3>
+                            <p class="text-slate-600">
+                                ศูนย์ DentX ม.เนชั่น เชียงใหม่
+                            </p>
+                        </div>
+
+                        <!-- VERTICAL TIMELINE -->
+                        <div class="relative pl-8 border-l-2 border-teal-300/50 space-y-8 ml-2">
+                            <!-- Timeline Item 1 -->
+                            <div class="relative">
+                                <div
+                                    class="absolute -left-[41px] top-4 w-5 h-5 bg-teal-500 rounded-full border-4 border-white shadow-lg shadow-teal-500/30">
+                                </div>
+                                <div
+                                    class="bg-slate-50 p-4 rounded-xl border border-slate-100 hover:border-teal-200 hover:shadow-md transition-all duration-300">
+                                    <span class="text-teal-600 font-bold text-sm block mb-1">08.30 - 09.00
+                                        น.</span>
+                                    <h4 class="font-bold text-slate-800"><i
+                                            class="fa-solid fa-file-signature mr-2 text-slate-400"></i><span
+                                            data-i18n="timeline_rego">ลงทะเบียน
+                                            (Registration)</span></h4>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 2 -->
+                            <div class="relative">
+                                <div
+                                    class="absolute -left-[41px] top-4 w-5 h-5 bg-orange-500 rounded-full border-4 border-white shadow-lg shadow-orange-500/30">
+                                </div>
+                                <div
+                                    class="bg-orange-50 p-4 rounded-xl border border-orange-100 hover:shadow-md transition-all duration-300">
+                                    <span class="text-orange-600 font-bold text-sm block mb-1">09.00 - 10.00
+                                        น.</span>
+                                    <h4 class="font-bold text-slate-800"><i
+                                            class="fa-solid fa-ribbon mr-2 text-orange-500"></i><span
+                                            data-i18n="timeline_opening">พิธีเปิด & DentX
+                                            Facility Tour</span></h4>
+                                    <p class="text-sm text-slate-500 mt-2" data-i18n="timeline_tour_desc">
+                                        เยี่ยมชมศูนย์นวัตกรรมและห้องปฏิบัติการ 3D
+                                        Printing Lab</p>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 3 -->
+                            <div class="relative">
+                                <div
+                                    class="absolute -left-[41px] top-4 w-5 h-5 bg-teal-500 rounded-full border-4 border-white shadow-lg shadow-teal-500/30">
+                                </div>
+                                <div
+                                    class="bg-slate-50 p-4 rounded-xl border border-slate-100 hover:border-teal-200 hover:shadow-md transition-all duration-300">
+                                    <span class="text-teal-600 font-bold text-sm block mb-1">10.30 - 12.00
+                                        น.</span>
+                                    <h4 class="font-bold text-slate-800"><i
+                                            class="fa-solid fa-microphone mr-2 text-slate-400"></i><span
+                                            data-i18n="timeline_talk_title">Innovation
+                                            Talk:
+                                            Future of Dentistry</span></h4>
+                                    <p class="text-sm text-slate-500 mt-2" data-i18n="timeline_talk_desc">
+                                        บรรยายพิเศษโดย
+                                        Speaker
+                                        ผู้เชี่ยวชาญระดับประเทศ</p>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 4 -->
+                            <div class="relative">
+                                <div
+                                    class="absolute -left-[41px] top-4 w-5 h-5 bg-teal-500 rounded-full border-4 border-white shadow-lg shadow-teal-500/30">
+                                </div>
+                                <div
+                                    class="bg-slate-50 p-4 rounded-xl border border-slate-100 hover:border-teal-200 hover:shadow-md transition-all duration-300">
+                                    <span class="text-teal-600 font-bold text-sm block mb-1">13.00 - 15.00
+                                        น.</span>
+                                    <h4 class="font-bold text-slate-800"><i
+                                            class="fa-solid fa-tooth mr-2 text-slate-400"></i><span
+                                            data-i18n="timeline_sem_title">Seminar:
+                                            Face-Forward
+                                            Approach</span></h4>
+                                    <p class="text-sm text-slate-500 mt-2" data-i18n="timeline_seminar_desc">
+                                        เจาะลึกเทคนิคการรักษาจัดฟันแบบ Face-Forward
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ENHANCED REGISTRATION BUTTON -->
+                        <div class="flex flex-wrap gap-4 pt-6">
+                            <button onclick="openAccessModal('attendee')"
+                                class="group relative px-10 py-4 bg-gradient-to-r from-orange-500 to-[#F77F00] text-white font-bold rounded-2xl hover:from-orange-600 hover:to-orange-500 transition-all duration-300 shadow-xl shadow-orange-500/40 hover:shadow-orange-500/60 hover:scale-105 flex items-center overflow-hidden">
+                                <!-- Shine effect -->
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700">
+                                </div>
+                                <!-- Pulse ring -->
+                                <div class="absolute inset-0 rounded-2xl animate-ping bg-orange-400/30">
+                                </div>
+                                <i class="fa-solid fa-ticket mr-3 text-xl relative z-10"></i>
+                                <span class="relative z-10 text-lg" data-i18n="btn_reg_full">ลงทะเบียนเข้าร่วมงาน</span>
+                                <span
+                                    class="relative z-10 ml-2 bg-white/20 px-3 py-1 rounded-full text-sm">4,500.-</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. WORKSHOPS -->
+    <section id="workshop" class="py-16 bg-white relative">
+        <div
+            class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-100/40 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex items-center mb-8 border-l-4 border-orange-500 pl-4">
+                <h2 class="text-2xl font-bold text-slate-800" data-i18n="section_workshop">เวิร์กชอป
+                    (Hands-on)
+                </h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="glass-card p-8 rounded-3xl hover:-translate-y-2 group animate-on-scroll">
+                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-tooth text-3xl text-blue-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-3" data-i18n="ws_lab_title">Digital Lab</h3>
+                    <p class="text-slate-500 mb-6 leading-relaxed" data-i18n="ws_lab_desc">
+                        บริการออกแบบและผลิตชิ้นงานทันตกรรมด้วยระบบ Digital ทั้งหมด ส่งงานผ่าน Cloud
+                        รวดเร็วแม่นยำ</p>
+                    <ul class="space-y-2 text-slate-600 mb-6">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i>
+                            Crown & Bridge</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i>
+                            Veneer 3D Design</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i>
+                            Surgical Guide</li>
+                    </ul>
+                    <a href="javascript:void(0)"
+                        onclick="Swal.fire({icon: 'info', title: 'Coming Soon', text: 'รายละเอียดและฟังก์ชันการจองจะเปิดให้บริการเร็วๆ นี้', confirmButtonColor: '#2EC4B6'})"
+                        class="inline-flex items-center text-blue-500 font-semibold hover:gap-2 transition-all"><span
+                            data-i18n="ws_lab_link">ดูรายละเอียด</span>
+                        <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="glass-card p-8 rounded-3xl hover:-translate-y-2 group animate-on-scroll"
+                    style="transition-delay: 0.1s;">
+                    <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-x-ray text-3xl text-orange-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-3" data-i18n="ws_xray_title">Digital X-Ray</h3>
+                    <p class="text-slate-500 mb-6 leading-relaxed" data-i18n="ws_xray_desc">
+                        บริการถ่ายภาพรังสี 2 และ 3 มิติ ด้วยเครื่อง CBCT ความละเอียดสูง พร้อม AI Analysis
+                    </p>
+                    <ul class="space-y-2 text-slate-600 mb-6">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-orange-400"></i>
+                            CBCT 3D Scan</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-orange-400"></i>
+                            AI Pathology Detection</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-orange-400"></i>
+                            Ceph Analysis</li>
+                    </ul>
+                    <a href="javascript:void(0)"
+                        onclick="Swal.fire({icon: 'info', title: 'Coming Soon', text: 'รายละเอียดและฟังก์ชันการจองจะเปิดให้บริการเร็วๆ นี้', confirmButtonColor: '#2EC4B6'})"
+                        class="inline-flex items-center text-orange-500 font-semibold hover:gap-2 transition-all"><span
+                            data-i18n="ws_lab_link">ดูรายละเอียด</span>
+                        <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="glass-card p-8 rounded-3xl hover:-translate-y-2 group animate-on-scroll"
+                    style="transition-delay: 0.2s;">
+                    <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-chalkboard-user text-3xl text-purple-500"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-3" data-i18n="ws_class_title">Classroom</h3>
+                    <p class="text-slate-500 mb-6 leading-relaxed" data-i18n="ws_class_desc">
+                        ห้องเรียนทันตกรรมดิจิทัล พร้อมเครื่อง Computer Spec สูง และโปรแกรมออกแบบทางทันตกรรม
+                    </p>
+                    <ul class="space-y-2 text-slate-600 mb-6">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-400"></i>
+                            High-Spec Workstations</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-400"></i>
+                            Exocad / 3Shape</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-400"></i> 40
+                            Seats Capacity</li>
+                    </ul>
+                    <a href="javascript:void(0)"
+                        onclick="Swal.fire({icon: 'info', title: 'Coming Soon', text: 'รายละเอียดและฟังก์ชันการจองจะเปิดให้บริการเร็วๆ นี้', confirmButtonColor: '#2EC4B6'})"
+                        class="inline-flex items-center text-purple-500 font-semibold hover:gap-2 transition-all"><span
+                            data-i18n="ws_lab_link">ดูรายละเอียด</span>
+                        <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- E-Learning Hub Section -->
+    <section id="elearning" class="py-24 relative">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <div class="inline-block px-4 py-1.5 rounded-full bg-teal-100 text-teal-700 text-sm font-bold mb-4">
+                    <i class="fa-solid fa-graduation-cap mr-2"></i> Online Learning
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-800 mb-4 animate-fade-in-up"
+                    style="animation-delay: 0.1s;" data-i18n="section_elearning">E-Learning Hub</h2>
+                <p class="text-xl text-slate-600 max-w-2xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s;"
+                    data-i18n="el_desc">
+                    คอร์สเรียนออนไลน์สำหรับทันตแพทย์ยุคใหม่ เรียนรู้ได้ทุกที่ทุกเวลา พัฒนาทักษะสู่ความเป็นเลิศ
+                </p>
+                <div class="mt-8">
+                    <a href="https://online4dent.com" target="_blank"
+                        class="inline-flex items-center btn-grad text-white px-8 py-4 rounded-full text-lg font-bold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-1 transition-all duration-300"
+                        style="background: linear-gradient(90deg, #14b8a6 0%, #2563eb 100%) !important; color: white !important; -webkit-text-fill-color: white !important;">
+                        <i class="fa-solid fa-right-to-bracket mr-2"></i> <span data-i18n="btn_login_learn">Login to
+                            Learn</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Course Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1: Startup Dental Clinic -->
+                <div class="glass-card group hover:border-teal-400 transition-all duration-300 relative overflow-hidden card-tilt animate-fade-in-up flex flex-col"
+                    style="animation-delay: 0.3s;">
+                    <!-- Image -->
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://www.online4dent.com:8443/uploads/1770188201458-00-0FE80E49-8777-46F7-8AD3-6ECEA97229CC.png"
+                            alt="Startup Dental Clinic"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-60">
+                        </div>
+                        <div class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg z-20 shadow-lg"
+                            data-i18n="badge_hot">
+                            HOT
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-teal-600 transition-colors line-clamp-2"
+                            data-i18n="course_startup">
+                            Startup Dental Clinic (Module 1)
+                        </h3>
+                        <div class="flex items-center text-sm text-slate-500 mb-6">
+                            <i class="fa-regular fa-clock mr-2 text-teal-500"></i> Online
+                            <span class="mx-2 text-slate-300">•</span>
+                            <span class="text-slate-400 line-through mr-2">8,900</span>
+                            <span class="text-teal-600 font-bold">3,900 THB</span>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="https://www.online4dent.com/courses/startup-dental-clinic-module-1" target="_blank"
+                                class="w-full block text-center py-3 rounded-xl border border-teal-500 text-teal-600 font-bold hover:bg-teal-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-teal-500/20">
+                                Start Learning
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Counter Staff -->
+                <div class="glass-card group hover:border-blue-400 transition-all duration-300 relative overflow-hidden card-tilt animate-fade-in-up flex flex-col"
+                    style="animation-delay: 0.4s;">
+                    <!-- Image -->
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://www.online4dent.com:8443/uploads/1768880343072-00-__________________.png"
+                            alt="Counter Staff"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-60">
+                        </div>
+                        <div class="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg z-20 shadow-lg"
+                            data-i18n="badge_new">
+                            NEW
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2"
+                            data-i18n="course_counter">
+                            Dental Counter Staff Foundation
+                        </h3>
+                        <div class="flex items-center text-sm text-slate-500 mb-6">
+                            <i class="fa-regular fa-clock mr-2 text-blue-500"></i> 3 Hours
+                            <span class="mx-2 text-slate-300">•</span>
+                            <span class="text-slate-400 line-through mr-2">4,900</span>
+                            <span class="text-blue-600 font-bold">2,900 THB</span>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="https://www.online4dent.com/courses/%E0%B8%9B%E0%B8%B9%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%90%E0%B8%B2%E0%B8%99%E0%B9%80%E0%B8%9E%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B9%80%E0%B8%9B%E0%B9%87%E0%B8%99%E0%B9%80%E0%B8%84%E0%B8%B2%E0%B9%80%E0%B8%95%E0%B8%AD%E0%B8%A3%E0%B9%8C%E0%B8%97%E0%B8%B1%E0%B8%99%E0%B8%95%E0%B8%81%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B8%A0%E0%B8%B2%E0%B8%A2%E0%B9%83%E0%B8%99-3-%E0%B8%8A%E0%B8%B1%E0%B9%88%E0%B8%A7%E0%B9%82%E0%B8%A1%E0%B8%87"
+                                target="_blank"
+                                class="w-full block text-center py-3 rounded-xl border border-blue-500 text-blue-600 font-bold hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-blue-500/20">
+                                Start Learning
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Pediatric Ortho -->
+                <div class="glass-card group hover:border-purple-400 transition-all duration-300 relative overflow-hidden card-tilt animate-fade-in-up flex flex-col"
+                    style="animation-delay: 0.5s;">
+                    <!-- Image -->
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://www.online4dent.com:8443/uploads/1769113422928-00-__________.png"
+                            alt="Pediatric Ortho"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-60">
+                        </div>
+                        <div class="absolute top-0 right-0 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg z-20 shadow-lg"
+                            data-i18n="badge_recom">
+                            RECOMMENDED
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-purple-600 transition-colors line-clamp-2"
+                            data-i18n="course_pediatric">
+                            Basic Pediatric Orthodontics
+                        </h3>
+                        <div class="flex items-center text-sm text-slate-500 mb-6">
+                            <i class="fa-regular fa-clock mr-2 text-purple-500"></i> Online
+                            <span class="mx-2 text-slate-300">•</span>
+                            <span class="text-purple-600 font-bold">Free</span>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="https://www.online4dent.com/courses/%E0%B9%80%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B8%95%E0%B9%89%E0%B8%99%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%9F%E0%B8%B1%E0%B8%99%E0%B9%80%E0%B8%94%E0%B9%87%E0%B8%81"
+                                target="_blank"
+                                class="w-full block text-center py-3 rounded-xl border border-purple-500 text-purple-600 font-bold hover:bg-purple-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-purple-500/20">
+                                Start Learning
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. INCUBATOR -->
+    <section id="incubator" class="py-16 bg-white relative">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-xs font-bold mb-4 border border-purple-100">
+                        <i class="fa-solid fa-lightbulb"></i> Startup Zone
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4 leading-tight"
+                        data-i18n="section_incubator">
+                        Incubator & Startups
+                    </h2>
+                    <p class="text-slate-500 mb-8 leading-relaxed text-lg" data-i18n="in_desc">
+                        เปิดรับไอเดียนวัตกรรมจากนักศึกษาและทันตแพทย์ เพื่อพัฒนาสู่เชิงพาณิชย์
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mt-1">
+                                <i class="fa-solid fa-comments"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800" data-i18n="in_card_consult">Consultation</h4>
+                                <p class="text-sm text-slate-500" data-i18n="in_card_consult_desc">
+                                    ให้คำปรึกษาทางธุรกิจและเทคโนโลยี</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mt-1">
+                                <i class="fa-solid fa-sack-dollar"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800" data-i18n="in_card_fund">Funding Support</h4>
+                                <p class="text-sm text-slate-500" data-i18n="in_card_fund_desc">โอกาสเข้าถึงแหล่งเงินทุน
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mt-1">
+                                <i class="fa-solid fa-building"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800" data-i18n="in_card_space">Co-Working Space</h4>
+                                <p class="text-sm text-slate-500" data-i18n="in_card_space_desc">
+                                    พื้นที่ทำงานพร้อมสิ่งอำนวยความสะดวก</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <button
+                            onclick="Swal.fire({icon: 'info', title: 'Coming Soon', text: 'ระบบลานเสนอโครงการจะเปิดให้บริการเร็วๆ นี้', confirmButtonColor: '#2EC4B6'})"
+                            class="px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition shadow-lg flex items-center gap-2 group">
+                            <span data-i18n="btn_propose">เสนอโครงการ</span> <i
+                                class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="md:w-1/2 relative">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-tr from-purple-500/20 to-teal-500/20 blur-3xl rounded-full">
+                    </div>
+                    <img src="hero_dental_abstract.png" class="relative z-10 w-full drop-shadow-2xl animate-float-slow"
+                        alt="Startups">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. AI PROMPT LIBRARY -->
+    <section id="showcase" class="py-16 bg-slate-50 text-slate-800 overflow-hidden relative">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-10">
+                <span class="text-teal-500 font-bold tracking-widest text-sm uppercase">Smart
+                    Assistant</span>
+                <h2 class="text-3xl font-bold text-slate-800 mt-2">คลังคำสั่ง AI <span class="text-teal-500">(Prompt
+                        Library)</span></h2>
+            </div>
+
+            <!-- Marquee Container -->
+            <div class="relative w-full overflow-hidden">
+                <div class="flex gap-4 animate-marquee whitespace-nowrap">
+                    <!-- Prompt Item 1 -->
+                    <div class="w-80 bg-white p-4 rounded-xl border border-slate-100 shadow-sm inline-block">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-robot text-teal-500"></i>
+                            <span class="font-bold text-sm text-slate-700">Treatment Plan
+                                Generator</span>
+                        </div>
+                        <p class="text-xs text-slate-500 truncate">"สร้างแผนการรักษาสำหรับเคสรากเทียมซี่
+                            36..."</p>
+                    </div>
+                    <!-- Prompt Item 2 -->
+                    <div class="w-80 bg-white p-4 rounded-xl border border-slate-100 shadow-sm inline-block">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-envelope text-blue-500"></i>
+                            <span class="font-bold text-sm text-slate-700">Patient Follow-up</span>
+                        </div>
+                        <p class="text-xs text-slate-500 truncate">
+                            "เขียนข้อความติดตามอาการคนไข้หลังผ่าตัด..."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. LOCATION & FAQ -->
+    <section id="location" class="py-16 bg-slate-50 relative z-20">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row gap-10">
+            <!-- Map Container -->
+            <div
+                class="md:w-1/2 h-64 bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-100 filter grayscale hover:grayscale-0 transition duration-500">
+                <iframe
+                    src="https://maps.google.com/maps?q=Nation%20University%20Chiang%20Mai&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+
+            <!-- Contact & Button -->
+            <div class="md:w-1/2 space-y-3">
+                <h2 class="text-xl font-bold text-teal-600" data-i18n="section_contact">
+                    ติดต่อเรา (Contact)
+                </h2>
+                <div class="bg-white p-4 rounded-lg border border-slate-100">
+                    <a href="tel:0806369818" target="_blank"
+                        onclick="navigator.clipboard.writeText('0806369818'); Swal.fire({toast:true, position:'top-end', icon:'success', title:'คัดลอกเบอร์โทรแล้ว!', showConfirmButton:false, timer:2000});"
+                        class="flex items-center gap-3 mb-2 hover:bg-slate-50 p-2 rounded-lg transition-colors group">
+                        <div
+                            class="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 group-hover:bg-teal-500 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <span
+                            class="font-bold text-slate-800 group-hover:text-teal-600 transition-colors">080-6369818</span>
+                    </a>
+                    <a href="mailto:phusadee_puk@nation.ac.th" target="_blank"
+                        onclick="navigator.clipboard.writeText('phusadee_puk@nation.ac.th'); Swal.fire({toast:true, position:'top-end', icon:'success', title:'คัดลอกอีเมลแล้ว!', showConfirmButton:false, timer:2000});"
+                        class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition-colors group">
+                        <div
+                            class="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 group-hover:bg-teal-500 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <span
+                            class="font-bold text-slate-800 group-hover:text-teal-600 transition-colors">phusadee_puk@nation.ac.th</span>
+                    </a>
+                </div>
+                <!-- FAQ Accordion -->
+                <div class="bg-white p-4 rounded-lg cursor-pointer border border-slate-100 hover:bg-slate-50 transition"
+                    onclick="this.classList.toggle('active'); this.querySelector('p').classList.toggle('hidden');">
+                    <h4 class="font-bold text-sm flex justify-between text-slate-800"><span
+                            data-i18n="faq_parking">สถานที่จอดรถ?</span> <i class="fa-solid fa-chevron-down"></i></h4>
+                    <p class="text-xs text-slate-500 mt-2 hidden" data-i18n="faq_parking_ans">
+                        มีลานจอดรถรองรับ 100
+                        คัน
+                        บริเวณด้านหน้าอาคาร ฟรีไม่มีค่าใช้จ่าย</p>
+                </div>
+                <!-- Updated Button for Directions -->
+                <a href="https://maps.app.goo.gl/A4pz8BNkKnjZQDjF8" target="_blank"
+                    class="relative z-20 block w-full text-center bg-teal-500 text-white font-bold py-3 rounded-lg hover:bg-teal-600 transition shadow-lg mt-4">
+                    <i class="fa-solid fa-diamond-turn-right mr-2"></i> <span data-i18n="btn_directions">ขอเส้นทาง
+                        (Google Maps)</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <!-- Logo & Contact -->
+                <div class="text-center md:text-left">
+                    <div
+                        class="inline-flex justify-center md:justify-start items-center gap-3 mb-4 bg-white p-3 rounded-xl">
+                        <img src="dentx_logo_final.png" alt="Dent X Logo" class="h-10 object-contain">
+                    </div>
+                    <p class="text-sm opacity-60 mb-1" data-i18n="contact_address">มหาวิทยาลัยเนชั่น 444
+                        หมู่ 2 ถนนวชิระปราการ ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100</p>
+                    <p class="text-sm opacity-60" data-i18n="contact_email">อีเมล: phusadee_puk@nation.ac.th</p>
+                </div>
+
+                <!-- Links -->
+                <div class="flex gap-6 text-sm font-medium">
+                    <a href="#conference" class="hover:text-teal-400 transition" data-i18n="nav_academic">วิชาการ</a>
+                    <a href="#workshop" class="hover:text-teal-400 transition" data-i18n="nav_workshop">Workshop</a>
+                    <a href="#elearning" class="hover:text-teal-400 transition" data-i18n="nav_elearning">E-Learning</a>
+                    <a href="#incubator" class="hover:text-teal-400 transition" data-i18n="nav_incubator">Incubator</a>
+                </div>
+            </div>
+
+            <div
+                class="border-t border-slate-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs opacity-40">
+                <p data-i18n="footer_copy">© 2026 Dent X Ecosystem | Nation University</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-white">Privacy Policy</a>
+                    <a href="#" class="hover:text-white">Terms of Use</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FIREBASE & LOGIC -->
+    <!-- Config MUST be loaded before main module -->
+    <script src="firebase-config.js"></script>
+
+    <!-- Firebase Compat SDKs (Required for file:// execution without CORS issues) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // --- CONFIG & INIT ---
+        // Config is loaded globally from firebase-config.js
+
+        let fbApp, fbDb, fbAuth, fbAppId;
+
+        try {
+            // Check global config
+            if (window.firebaseConfig && window.firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                fbApp = firebase.initializeApp(window.firebaseConfig);
+                fbDb = firebase.firestore();
+                fbAuth = firebase.auth();
+                fbAppId = window.appId;
+
+                // Assign to window for global access
+                window.fbDb = fbDb;
+                window.fbAuth = fbAuth;
+                window.firebase = firebase;
+
+                // Monitor auth state changes
+                fbAuth.onAuthStateChanged((user) => {
+                    if (user) {
+                        if (!user.emailVerified) {
+                            console.log("User email not verified, signing out automatically");
+                            fbAuth.signOut();
+                            updateUIForUser(null);
+                        } else {
+                            console.log("User logged in:", user.email);
+                            updateUIForUser(user);
+                        }
+                    } else {
+                        console.log("User logged out");
+                        updateUIForUser(null);
+                    }
+                });
+
+                console.log("Firebase initialized successfully (Compat Mode)");
+
+            } else {
+                console.warn("Firebase config is placeholder. Running in Offline/Demo Mode.");
+                // db remains undefined, triggering offline logic automatically
+            }
+        } catch (e) {
+            console.error("Firebase init failed:", e);
+        }
+
+        // --- DYNAMIC Z-INDEX MANAGER ---
+        // Ensures the last-opened modal/widget always appears on top
+        let _zIndexCounter = 9990;
+        window.bringToFront = function (element) {
+            if (!element) return;
+            _zIndexCounter += 1;
+            element.style.zIndex = _zIndexCounter;
+        };
+
+        // Add mousedown listener to bring clicked modal/widget to front
+        document.addEventListener('mousedown', function (e) {
+            const chatWidget = e.target.closest('#ai-chat-widget');
+            if (chatWidget) {
+                bringToFront(document.getElementById('ai-chat-widget'));
+                return;
+            }
+
+            const dashboardPanel = e.target.closest('#dashboard-panel');
+            if (dashboardPanel) {
+                bringToFront(document.getElementById('modal-dashboard'));
+                return;
+            }
+
+            const accessContent = e.target.closest('#modal-access .modal-content');
+            if (accessContent) {
+                bringToFront(document.getElementById('modal-access'));
+                return;
+            }
+
+            const paymentContent = e.target.closest('#modal-payment > div:nth-child(2)') || e.target.closest('#modal-payment-content');
+            if (paymentContent) {
+                bringToFront(document.getElementById('modal-payment'));
+                return;
+            }
+        }, true);
+    </script>
+    <script src="js/auth.js?v=20260301b"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        // --- IMAGE LIGHTBOX ---
+        function openImageModal(src) {
+            const modal = document.getElementById('modal-image');
+            const img = document.getElementById('modal-image-src');
+            img.src = src;
+            modal.classList.remove('hidden');
+            // Small timeout to allow display:block to apply before adding active class for opacity transition
+            setTimeout(() => {
+                modal.classList.add('active');
+                img.classList.remove('scale-95');
+                img.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('modal-image');
+            const img = document.getElementById('modal-image-src');
+            modal.classList.remove('active');
+            img.classList.remove('scale-100');
+            img.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                img.src = '';
+            }, 300);
+        }
+
+        // --- TRANSLATION SYSTEM ---
+        const translations = {
+            th: {
+                // Navbar
+                nav_academic: 'วิชาการ',
+                nav_workshop: 'Workshop',
+                nav_elearning: 'E-Learning',
+                nav_incubator: 'Incubator',
+                nav_login: 'เข้าสู่ระบบ',
+                nav_register: 'ลงทะเบียนเข้างาน',
+
+                // Hero Section
+                hero_badge: 'ศูนย์นวัตกรรมทันตกรรม ม.เนชั่น',
+                hero_title_prefix: 'อนาคตแห่ง',
+                hero_title_highlight: 'ทันตกรรมดิจิทัล',
+                hero_desc: `สัมผัสประสบการณ์การเรียนรู้และเทคโนโลยีทันตกรรมสมัยใหม่ ที่รวมนวัตกรรม AI และ Hardware ล่าสุดไว้ในที่เดียว เพื่อยกระดับวิชาชีพทันตกรรมสู่อนาคต`,
+
+                // Stats
+                stat_attendees: 'ผู้เข้าร่วมงาน',
+                stat_speakers: 'วิทยากรเชี่ยวชาญ',
+                stat_booths: 'บูธนวัตกรรม',
+                stat_ai_projects: 'โปรเจกต์ AI',
+                stat_satisfaction: 'ความพึงพอใจ',
+                stat_support: 'ดูแล 24/7',
+                stat_award: 'อันดับ 1',
+
+                // Upcoming Conference
+                conf_badge_grand: 'GRAND OPENING',
+                conf_badge_onsite: 'ONSITE',
+                conf_title: 'Face-Forward Soft Tissue Driven Orthodontics & Digital Dentistry Paradigm',
+                conf_date_label: 'วันที่จัดงาน',
+                conf_date_val: 'วันศุกร์ที่ 20 มีนาคม 2569',
+                conf_loc_label: 'สถานที่',
+                conf_loc_val: 'ศูนย์ DentX ม.เนชั่น เชียงใหม่',
+
+                // Countdown
+                count_title: 'นับถอยหลังวันงาน',
+                time_days: 'วัน',
+                time_hrs: 'ชั่วโมง',
+                time_mins: 'นาที',
+                time_secs: 'วินาที',
+
+                // Highlights
+                highlight_title: 'หัวข้อการบรรยายไฮไลท์',
+                highlight_1: 'อุปกรณ์จัดฟันสำหรับเด็กและเครื่องมือปรับการทำงานกล้ามเนื้อ',
+                highlight_2: 'การจัดฟันแบบใสและทันตกรรมดิจิทัล',
+                highlight_3: 'ทันตกรรมดิจิทัลและปัญญาประดิษฐ์ (AI)',
+
+                // Conference CTA
+                btn_reg_price: 'ลงทะเบียน (4,500 บาท)',
+                btn_call: '080-6369818',
+                poster_more: 'รายละเอียดเพิ่มเติม',
+
+                // Academic Section
+                section_academic: 'ประชุมวิชาการ (Academic)',
+                event_title: 'GRAND OPENING ONSITE: Face-Forward Soft Tissue Driven Orthodontics & Digital Dentistry Paradigm',
+                event_desc: 'งานเปิดตัวศูนย์นวัตกรรมและสัมมนาวิชาการด้านทันตกรรมจัดฟันและนวัตกรรมดิจิทัล',
+
+                // Timeline
+                timeline_rego: 'ลงทะเบียน (Registration)',
+                timeline_opening: 'พิธีเปิด & DentX Facility Tour',
+                timeline_tour_desc: 'เยี่ยมชมศูนย์นวัตกรรมและห้องปฏิบัติการ 3D Printing Lab',
+                timeline_talk_title: 'Innovation Talk: Future of Dentistry',
+                timeline_talk_desc: 'บรรยายพิเศษโดย Speaker ผู้เชี่ยวชาญระดับประเทศ',
+                timeline_sem_title: 'Seminar: Face-Forward Approach',
+                timeline_seminar_desc: 'เจาะลึกเทคนิคการรักษาจัดฟันแบบ Face-Forward',
+                btn_reg_full: 'ลงทะเบียนเข้าร่วมงาน',
+
+                // Workshop
+                section_workshop: 'เวิร์กชอป (Hands-on)',
+                ws_lab_title: 'Digital Lab',
+                ws_lab_desc: 'บริการออกแบบและผลิตชิ้นงานทันตกรรมด้วยระบบ Digital ทั้งหมด ส่งงานผ่าน Cloud รวดเร็วแม่นยำ',
+                ws_lab_link: 'ดูรายละเอียด',
+                ws_xray_title: 'Digital X-Ray',
+                ws_xray_desc: 'บริการถ่ายภาพรังสี 2 และ 3 มิติ ด้วยเครื่อง CBCT ความละเอียดสูง พร้อม AI Analysis',
+                ws_class_title: 'Classroom',
+                ws_class_desc: 'ห้องเรียนทันตกรรมดิจิทัล พร้อมเครื่อง Computer Spec สูง และโปรแกรมออกแบบทางทันตกรรม',
+
+                // E-Learning
+                section_elearning: 'E-Learning Hub',
+                el_desc: 'คอร์สเรียนออนไลน์สำหรับทันตแพทย์ยุคใหม่ เรียนรู้ได้ทุกที่ทุกเวลา พัฒนาทักษะสู่ความเป็นเลิศ',
+                btn_login_learn: 'เข้าสู่ระบบเรียน',
+                btn_signup_new: 'สมัครสมาชิกใหม่',
+                course_startup: 'Startup Dental Clinic (Module 1)',
+                course_counter: 'ปูพื้นฐานเคาน์เตอร์ทันตกรรม (3 ชม.)',
+                course_pediatric: 'เริ่มต้นจัดฟันเด็ก (Basic Pediatric Ortho)',
+                badge_hot: 'HOT',
+                badge_new: 'NEW',
+                badge_recom: 'RECOMMENDED',
+
+
+                // Incubator
+                section_incubator: 'Incubator & Startups',
+                in_desc: 'พื้นที่บ่มเพาะนวัตกรรมสำหรับ Startups ด้านทันตกรรม เราพร้อมสนับสนุนไอเดียของคุณให้เป็นจริง',
+                in_card_consult: 'Consultation',
+                in_card_consult_desc: 'ให้คำปรึกษาทางธุรกิจและเทคโนโลยี',
+                in_card_fund: 'Funding Support',
+                in_card_fund_desc: 'โอกาสเข้าถึงแหล่งเงินทุน',
+                in_card_space: 'Co-Working Space',
+                in_card_space_desc: 'พื้นที่ทำงานพร้อมสิ่งอำนวยความสะดวก',
+
+                // Contact & Footer
+                section_contact: 'ติดต่อเรา (Contact)',
+                contact_address: 'มหาวิทยาลัยเนชั่น 444 หมู่ 2 ถนนวชิระปราการ ต.ป่าแดด อ.เมือง จ.เชียงใหม่ 50100',
+                contact_phone: 'โทรศัพท์: 053-270222',
+                contact_email: 'อีเมล: info@nation.ac.th',
+                btn_get_dir: 'ขอเส้นทาง (Google Maps)',
+                footer_copy: '© 2026 Dent X Ecosystem | Nation University. All rights reserved.',
+
+                // Modals
+                modal_title: 'Dent X Access Hub',
+                tab_signup: 'สมัครสมาชิก',
+                tab_login: 'เข้าสู่ระบบ',
+                tab_dashboard: 'Dashboard',
+                tab_attendee: 'ลงทะเบียน',
+                tab_vendor: 'จองบูธ',
+
+                // Forms
+                form_signup_title: 'สมัครสมาชิก',
+                form_signup_desc: 'สร้างบัญชีเพื่อลงทะเบียนและจองบูธ',
+                form_attendee_title: 'ลงทะเบียนเข้าร่วมงาน',
+                form_attendee_desc: 'สำหรับทันตแพทย์ นักศึกษา และบุคคลทั่วไป',
+                form_vendor_title: 'แบบฟอร์มจองพื้นที่บูธ',
+                form_vendor_desc: 'สำหรับบริษัทห้างร้านและผู้สนับสนุน',
+                form_login_title: 'เข้าสู่ระบบสมาชิก',
+                form_login_desc: 'สำหรับสมาชิกและผู้ดูแลระบบ',
+
+                placeholder_name: 'ชื่อ-นามสกุล',
+                placeholder_email: 'อีเมล',
+                placeholder_phone: 'เบอร์โทรศัพท์',
+                placeholder_pass: 'รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)',
+                placeholder_confirm_pass: 'ยืนยันรหัสผ่าน',
+                placeholder_company: 'ชื่อบริษัท / ร้านค้า',
+                placeholder_tax: 'เลขประจำตัวผู้เสียภาษี (ถ้ามี)',
+                placeholder_contact: 'ชื่อผู้ติดต่อ',
+
+                btn_create_acc: 'สร้างบัญชี',
+                btn_have_acc: 'เข้าสู่ระบบ',
+                btn_no_acc: 'สมัครสมาชิก',
+                btn_confirm_reg: 'ยืนยันการลงทะเบียน',
+                btn_send_booking: 'ส่งใบจองพื้นที่',
+                btn_login: 'เข้าสู่ระบบ',
+
+                // Admin & User Dashboard
+                dash_my_dash: 'My Dashboard',
+                dash_manage: 'จัดการข้อมูลการลงทะเบียนของคุณ',
+                dash_signout: 'Sign Out',
+                dash_regis: 'Event Registrations',
+                dash_bookings: 'Booth Bookings',
+                dash_no_reg: 'ไม่พบประวัติการลงทะเบียน',
+                dash_no_book: 'ไม่พบประวัติการจองบูธ',
+
+                // Payment
+                pay_title: 'ชำระเงินค่าลงทะเบียน',
+                pay_total: 'ยอดชำระทั้งหมด',
+                pay_scan: 'Scan to Pay via PromptPay',
+                pay_zoom: '💡 คลิกที่ QR Code เพื่อขยาย',
+                pay_slip_label: 'แนบหลักฐานการโอนเงิน (Slip)',
+                pay_slip_hint: '*รองรับไฟล์ภาพ .jpg, .png',
+                pay_btn_confirm: 'ยืนยันการชำระเงิน',
+
+                // Alerts
+                alert_success: 'สำเร็จ!',
+                alert_saved: 'บันทึกข้อมูลเรียบร้อยแล้ว',
+                alert_error: 'เกิดข้อผิดพลาด',
+                alert_welcome: 'ยินดีต้อนรับ',
+                alert_login_req: 'กรุณาเข้าสู่ระบบ'
+            },
+            en: {
+                // Navbar
+                nav_academic: 'Academic',
+                nav_workshop: 'Workshop',
+                nav_elearning: 'E-Learning',
+                nav_incubator: 'Incubator',
+                nav_login: 'Login',
+                nav_register: 'Register',
+
+                // Hero Section
+                hero_badge: 'Nation University Dental Innovation',
+                hero_title_prefix: 'The Future of',
+                hero_title_highlight: 'Digital Dentistry',
+                hero_desc: `Experience the latest in dental education and technology. Integrating AI, modern hardware, and expert knowledge to elevate the dental profession into the future.`,
+
+                // Stats
+                stat_attendees: 'Attendees',
+                stat_speakers: 'Expert Speakers',
+                stat_booths: 'Innovation Booths',
+                stat_ai_projects: 'AI Projects',
+                stat_satisfaction: 'Satisfaction',
+                stat_support: '24/7 Support',
+                stat_award: 'Top Rated',
+
+                // Upcoming Conference
+                conf_badge_grand: 'GRAND OPENING',
+                conf_badge_onsite: 'ONSITE',
+                conf_title: 'Face-Forward Soft Tissue Driven Orthodontics & Digital Dentistry Paradigm',
+                conf_date_label: 'Date',
+                conf_date_val: 'Friday, March 20, 2026',
+                conf_loc_label: 'Location',
+                conf_loc_val: 'DentX Center, Nation University Chiang Mai',
+
+                // Countdown
+                count_title: 'Countdown to Event',
+                time_days: 'Days',
+                time_hrs: 'Hrs',
+                time_mins: 'Mins',
+                time_secs: 'Secs',
+
+                // Highlights
+                highlight_title: 'Highlight Topics',
+                highlight_1: 'Pediatric Orthodontic Devices and Myofunctional Appliances',
+                highlight_2: 'Clear Aligners and Digital Dentistry',
+                highlight_3: 'Digital Dentistry and Artificial Intelligence (AI)',
+
+                // Conference CTA
+                btn_reg_price: 'Register (4,500 THB)',
+                btn_call: '080-6369818',
+                poster_more: 'More Details',
+
+                // Academic Section
+                section_academic: 'Academic Conference',
+                event_title: 'GRAND OPENING ONSITE: Face-Forward Soft Tissue Driven Orthodontics & Digital Dentistry Paradigm',
+                event_desc: `Grand opening of the dental innovation center and academic seminar on orthodontics and digital dentistry.`,
+
+                // Timeline
+                timeline_rego: 'Registration',
+                timeline_opening: 'Opening Ceremony & Facility Tour',
+                timeline_tour_desc: 'Visit the innovation center and 3D Printing Lab',
+                timeline_talk_title: 'Innovation Talk: Future of Dentistry',
+                timeline_talk_desc: 'Special lecture by national expert speakers',
+                timeline_sem_title: 'Seminar: Face-Forward Approach',
+                timeline_seminar_desc: 'Deep dive into Face-Forward orthodontic treatment techniques',
+                btn_reg_full: 'Register for Event',
+
+                // Workshop
+                section_workshop: 'Workshops (Hands-on)',
+                ws_lab_title: 'Digital Lab',
+                ws_lab_desc: 'Fully digital dental design and production service. Cloud submission with high precision.',
+                ws_lab_link: 'Details',
+                ws_xray_title: 'Digital X-Ray',
+                ws_xray_desc: '2D & 3D CBCT radiography service with high resolution and AI Analysis.',
+                ws_class_title: 'Classroom',
+                ws_class_desc: 'Digital dentistry classroom equipped with high-spec computers and dental design software.',
+
+                // E-Learning
+                // E-Learning Hub
+                section_elearning: 'E-Learning Hub',
+                el_desc: 'Online courses for modern dentists. Learn anywhere, anytime, to achieve professional excellence.',
+                btn_login_learn: 'Login to Learn',
+                btn_signup_new: 'Sign Up',
+                course_startup: 'Startup Dental Clinic (Module 1)',
+                course_counter: 'Dental Counter Staff Foundation (3 Hrs)',
+                course_pediatric: 'Basic Pediatric Orthodontics',
+                badge_hot: 'HOT',
+                badge_new: 'NEW',
+                badge_recom: 'RECOMMENDED',
+
+                // Incubator
+                section_incubator: 'Incubator & Startups',
+                in_desc: 'Innovation incubator for dental startups. We support your ideas to reality.',
+                in_card_consult: 'Consultation',
+                in_card_consult_desc: 'Business and technology consultation',
+                in_card_fund: 'Funding Support',
+                in_card_fund_desc: 'Access to funding sources',
+                in_card_space: 'Co-Working Space',
+                in_card_space_desc: 'Workspace with full amenities',
+
+                // Contact & Footer
+                section_contact: 'Contact Us',
+                contact_address: 'Nation University, 444 Moo 2, Wachiraprakarn Rd, Pa Daet, Mueang, Chiang Mai 50100',
+                contact_phone: 'Tel: 053-270222',
+                contact_email: 'Email: info@nation.ac.th',
+                btn_get_dir: 'Get Directions (Google Maps)',
+                footer_copy: '© 2026 Dent X Ecosystem | Nation University. All rights reserved.',
+
+                // Modals
+                modal_title: 'Dent X Access Hub',
+                tab_signup: 'Sign Up',
+                tab_login: 'Login',
+                tab_dashboard: 'Dashboard',
+                tab_attendee: 'Register',
+                tab_vendor: 'Book Booth',
+
+                // Forms
+                form_signup_title: 'Create Account',
+                form_signup_desc: 'Create an account to register and book booths',
+                form_attendee_title: 'Event Registration',
+                form_attendee_desc: 'For dentists, students, and general public',
+                form_vendor_title: 'Booth Booking Form',
+                form_vendor_desc: 'For companies and sponsors',
+                form_login_title: 'Member Login',
+                form_login_desc: 'For members and administrators',
+
+                placeholder_name: 'Full Name',
+                placeholder_email: 'Email Address',
+                placeholder_phone: 'Phone Number',
+                placeholder_pass: 'Password (min. 6 chars)',
+                placeholder_confirm_pass: 'Confirm Password',
+                placeholder_company: 'Company / Store Name',
+                placeholder_tax: 'Tax ID (Optional)',
+                placeholder_contact: 'Contact Person',
+
+                btn_create_acc: 'Create Account',
+                btn_have_acc: 'Login',
+                btn_no_acc: 'Sign Up',
+                btn_confirm_reg: 'Confirm Registration',
+                btn_send_booking: 'Submit Booking',
+                btn_login: 'Login',
+
+                // Admin & User Dashboard
+                dash_my_dash: 'My Dashboard',
+                dash_manage: 'Manage your registrations',
+                dash_signout: 'Sign Out',
+                dash_regis: 'Event Registrations',
+                dash_bookings: 'Booth Bookings',
+                dash_no_reg: 'No registration history found.',
+                dash_no_book: 'No booth booking history found.',
+
+                // Payment
+                pay_title: 'Registration Payment',
+                pay_total: 'Total Amount',
+                pay_scan: 'Scan to Pay via PromptPay',
+                pay_zoom: '💡 Click QR Code to Zoom',
+                pay_slip_label: 'Attach Transfer Slip',
+                pay_slip_hint: '*Supports .jpg, .png',
+                pay_btn_confirm: 'Confirm Payment',
+
+                // Alerts
+                alert_success: 'Success!',
+                alert_saved: 'Data saved successfully.',
+                alert_error: 'Error',
+                alert_welcome: 'Welcome',
+                alert_login_req: 'Please Login'
+            }
+        };
+
+        window.switchLanguage = (lang) => {
+            const t = translations[lang];
+            // Update Text
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.innerText = t[key];
+            });
+            // Update Placeholders
+            document.querySelectorAll('[data-placeholder-i18n]').forEach(el => {
+                const key = el.getAttribute('data-placeholder-i18n');
+                if (t[key]) el.placeholder = t[key];
+            });
+
+            // Update Button Styles
+            if (lang === 'th') {
+                document.getElementById('lang-btn-th').className = 'px-2 py-1 bg-slate-200 text-slate-800 font-bold transition';
+                document.getElementById('lang-btn-en').className = 'px-2 py-1 hover:bg-slate-100 text-slate-500 transition';
+            } else {
+                document.getElementById('lang-btn-en').className = 'px-2 py-1 bg-slate-200 text-slate-800 font-bold transition';
+                document.getElementById('lang-btn-th').className = 'px-2 py-1 hover:bg-slate-100 text-slate-500 transition';
+            }
+            document.documentElement.lang = lang;
+        };
+
+        // --- COURSE DATA & RENDERER ---
+        // Data synced from online4dent.com
+        const defaultCourses = [
+            {
+                title: "ปูพื้นฐานเพื่อเป็นเคาเตอร์ทันตกรรมภายใน 3 ชั่วโมง",
+                desc: "เรียนรู้พื้นฐานการทำงานเคาเตอร์คลินิกทันตกรรม",
+                progress: 0,
+                isFree: false,
+                price: "2,900 บาท",
+                link:
+                    "https://www.online4dent.com/courses/%E0%B8%9B%E0%B8%B9%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%90%E0%B8%B2%E0%B8%99%E0%B9%80%E0%B8%9E%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B9%80%E0%B8%9B%E0%B9%87%E0%B8%99%E0%B9%80%E0%B8%84%E0%B8%B2%E0%B9%80%E0%B8%95%E0%B8%AD%E0%B8%A3%E0%B9%8C%E0%B8%97%E0%B8%B1%E0%B8%99%E0%B8%95%E0%B8%81%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B8%A0%E0%B8%B2%E0%B8%A2%E0%B9%83%E0%B8%99-3-%E0%B8%8A%E0%B8%B1%E0%B9%88%E0%B8%A7%E0%B9%82%E0%B8%A1%E0%B8%87",
+                image: "https://www.online4dent.com:8443/uploads/1768880343072-00-__________________.png",
+                imgIcon: "fa-solid fa-user-nurse"
+            },
+            {
+                title: "เริ่มต้นจัดฟันเด็ก",
+                desc: "ปูพื้นฐานการจัดฟันในเด็กแบบเข้าใจง่าย",
+                progress: 0,
+                isFree: true,
+                price: "Free",
+                link:
+                    "https://www.online4dent.com/courses/%E0%B9%80%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B8%95%E0%B9%89%E0%B8%99%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%9F%E0%B8%B1%E0%B8%99%E0%B9%80%E0%B8%94%E0%B9%87%E0%B8%81",
+                image: "https://www.online4dent.com:8443/uploads/1769113422928-00-__________.png",
+                imgIcon: "fa-solid fa-child"
+            },
+            {
+                title: "Perio-Surgery by Dentrix",
+                desc: "เทคนิคการผ่าตัดปริทันต์ขั้นสูง",
+                progress: 0,
+                isFree: false,
+                price: "35,000 บาท",
+                link: "https://www.online4dent.com/courses/perio-surgery-by-dentrix",
+                image: "https://www.online4dent.com:8443/uploads/1769112795396-00-perio_dentrix.png",
+                imgIcon: "fa-solid fa-tooth"
+            },
+            {
+                title: "การบรรยายพิเศษหมอมด \"ทางออกเมื่อคลินิกทันตกรรมแข่งกันลดราคา\"",
+                desc: "กลยุทธ์การบริหารคลินิกในยุคแข่งขัน",
+                progress: 0,
+                isFree: true,
+                price: "Free",
+                link:
+                    "https://www.online4dent.com/courses/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9A%E0%B8%A3%E0%B8%A3%E0%B8%A2%E0%B8%B2%E0%B8%A2%E0%B8%9E%E0%B8%B4%E0%B9%80%E0%B8%A8%E0%B8%A9%E0%B8%AB%E0%B8%A1%E0%B8%AD%E0%B8%A1%E0%B8%94-%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%AD%E0%B8%81%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%84%E0%B8%A5%E0%B8%B4%E0%B8%99%E0%B8%B4%E0%B8%81%E0%B8%97%E0%B8%B1%E0%B8%99%E0%B8%95%E0%B8%81%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B9%81%E0%B8%82%E0%B9%88%E0%B8%87%E0%B8%81%E0%B8%B1%E0%B8%99%E0%B8%A5%E0%B8%94%E0%B8%A3%E0%B8%B2%E0%B8%84%E0%B8%B2",
+                image: "https://www.online4dent.com:8443/uploads/1769113486286-00-IMG_7943.png",
+                imgIcon: "fa-solid fa-bullhorn"
+            },
+            {
+                title: "7 Insight for service business for 2025",
+                desc: "มุมมองธุรกิจบริการในปี 2025",
+                progress: 0,
+                isFree: true,
+                price: "Free",
+                link: "https://www.online4dent.com/courses/7-insight-for-service-business-for-2025",
+                image: "https://www.online4dent.com:8443/uploads/1769114237197-00-7insight.png",
+                imgIcon: "fa-solid fa-lightbulb"
+            },
+            {
+                title: "การทำ MOU",
+                desc: "การจัดทำบันทึกข้อตกลงความร่วมมือ",
+                progress: 0,
+                isFree: false,
+                price: "3,000 บาท",
+                link: "https://www.online4dent.com/courses/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%97%E0%B8%B3-mou",
+                image: "https://www.online4dent.com:8443/uploads/1769116265802-00-_________________.png",
+                imgIcon: "fa-solid fa-file-contract"
+            }
+        ];
+
+        window.renderCourses = () => {
+            const grid = document.getElementById('courses-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            defaultCourses.forEach(c => {
+                const isMember = document.body.classList.contains('is-member');
+                // Premium courses are locked if not a member
+                const isLocked = !c.isFree && !isMember;
+                const cardClass = !c.isFree ? "course-card premium" : "course-card";
+                const badge = c.isFree
+                    ? `< span class="absolute top-2 right-2 bg-green-500 text-[10px] px-2 py-0.5 rounded text-white"> FREE</span> `
+                    : ``;
+
+                const html = `
+        < a href="${c.link}" target="_blank"
+            class="${cardClass} glass-card rounded-2xl overflow-hidden group cursor-pointer hover:-translate-y-2 transition-all block relative">
+            ${isLocked ? `
+            <div
+                class="lock-overlay absolute inset-0 bg-slate-900/60 backdrop-blur-sm z-10 flex flex-col items-center justify-center text-white">
+                <i class="fa-solid fa-lock text-2xl mb-2"></i>
+                <span class="text-xs font-bold">Members Only</span>
+            </div>
+            ` : ''
+                    }
+
+            <div class="locked-content h-full flex flex-col ${isLocked ? 'blur-sm grayscale opacity-50' : ''}">
+                <div class="h-32 bg-slate-100 flex items-center justify-center relative overflow-hidden">
+                    ${c.image
+                        ? `<img src="${c.image}" alt="${c.title}"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />`
+                        : `<i
+                        class="${c.imgIcon || 'fa-solid fa-book'} text-4xl text-slate-300 group-hover:scale-110 transition"></i>`
+                    }
+                    ${badge}
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <h4 class="font-bold text-sm mb-1 text-slate-800 line-clamp-2 min-h-[2.5em]">${c.title}</h4>
+                    <p class="text-xs text-slate-500 mb-2 flex-1 line-clamp-2">${c.desc}</p>
+                    ${c.isFree ? `
+                    <div class="w-full bg-slate-100 h-1 rounded-full mt-auto">
+                        <div class="bg-green-500 h-1 rounded-full" style="width: ${c.progress}%"></div>
+                    </div>
+                    <p class="text-[10px] text-right mt-1 text-slate-400 font-medium">${c.progress}% Completed</p>
+                    ` : `
+                    <div class="w-full bg-slate-100 h-1 rounded-full mt-auto"></div>
+                    <p class="text-[10px] text-right mt-1 text-slate-400 font-medium">Premium Course</p>
+                    `}
+                </div>
+            </div>
+            </a>
+            `;
+                grid.innerHTML += html;
+            });
+        };
+
+        // --- GLOBAL FUNCTIONS ---
+
+        // Auto-fill forms with user data when logged in
+        async function prefillFormsWithUserData() {
+            const user = fbAuth ? fbAuth.currentUser : null;
+            if (!user || !fbDb) return;
+
+            try {
+                // Get user data from Firestore
+                const userDoc = await fbDb.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+
+                if (userData) {
+                    const name = userData.displayName || '';
+                    const phone = userData.phoneNumber || '';
+
+                    // Prefill attendee form
+                    const attendeeName = document.getElementById('attendee-name');
+                    const attendeePhone = document.getElementById('attendee-phone');
+                    if (attendeeName) attendeeName.value = name;
+                    if (attendeePhone) attendeePhone.value = phone;
+
+                    // Prefill vendor form (contact person & phone only)
+                    const vendorContact = document.getElementById('vendor-contact');
+                    const vendorPhone = document.getElementById('vendor-phone');
+                    if (vendorContact) vendorContact.value = name;
+                    if (vendorPhone) vendorPhone.value = phone;
+                }
+            } catch (error) {
+                console.warn("Could not prefill user data:", error);
+            }
+        }
+
+        window.openAccessModal = (tabName) => {
+            // Check login for restricted tabs
+            if ((tabName === 'attendee' || tabName === 'vendor' || tabName === 'dashboard') && !currentUser) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'กรุณาเข้าสู่ระบบ',
+                    text: 'ท่านต้องเข้าสู่ระบบหรือสมัครสมาชิกเพื่อดำเนินการต่อ',
+                    confirmButtonText: 'ตกลง',
+                    confirmButtonColor: '#2EC4B6'
+                });
+                tabName = 'login';
+            }
+
+            const modal = document.getElementById('modal-access');
+            modal.classList.remove('hidden');
+            modal.classList.remove('pointer-events-none');
+            bringToFront(modal); // Dynamic z-index
+            setTimeout(() => modal.classList.add('active'), 10);
+            switchTab(tabName);
+
+            // Auto-fill forms with user data if logged in
+            if (tabName === 'attendee' || tabName === 'vendor') {
+                prefillFormsWithUserData();
+            }
+        };
+
+        window.closeAccessModal = () => {
+            const modal = document.getElementById('modal-access');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.classList.add('pointer-events-none');
+                modal.classList.add('hidden');
+            }, 300);
+        };
+
+        window.switchTab = (tabName) => {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.className = 'tab-btn flex-1 text-center py-3 text-sm font-medium hover:bg-slate-50');
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+            const btn = document.getElementById(`tab-btn-${tabName}`);
+            if (btn) btn.classList.add(`active-${tabName}`);
+
+            const pane = document.getElementById(`tab-${tabName}`);
+            if (pane) pane.classList.add('active');
+
+            // Also prefill when switching tabs
+            if (tabName === 'attendee' || tabName === 'vendor') {
+                prefillFormsWithUserData();
+            }
+
+            // Load Dashboard Data
+            if (tabName === 'dashboard') {
+                loadUserDashboard();
+            }
+        };
+
+
+
+        // --- AUTH & SUBMIT ---
+        window.handleLogin = async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Check for admin hardcoded login (temporary)
+            if (username === 'admin' && password === 'admin123') {
+                sessionStorage.setItem('isAdmin', 'true');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Welcome Admin',
+                    text: 'Opening Dashboard...',
+                    timer: 800,
+                    showConfirmButton: false,
+                    background: '#05201A',
+                    color: '#fff'
+                }).then(() => {
+                    window.location.href = 'admin.html';
+                });
+                return;
+            }
+            if (username === 'staff' && password === 'staff123') {
+                sessionStorage.setItem('isAdmin', 'true');
+                sessionStorage.setItem('adminRole', 'staff');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Welcome Staff',
+                    text: 'Opening Dashboard...',
+                    timer: 800,
+                    showConfirmButton: false,
+                    background: '#05201A',
+                    color: '#fff'
+                }).then(() => {
+                    window.location.href = 'admin.html';
+                });
+                return;
+            }
+
+            // Route standard users to auth.js logic
+            if (typeof window.handleLoginWithEmail === 'function') {
+                await window.handleLoginWithEmail(e);
+            } else {
+                console.error("auth.js not loaded properly.");
+            }
+        };
+
+        // ===== ADMIN LOGIN FUNCTION =====
+        window.handleAdminLogin = () => {
+            const username = document.getElementById('admin-username').value.trim().toLowerCase();
+            const passEl = document.getElementById('admin-password'); // assume there is a password field or might need to add one
+            const password = passEl ? passEl.value : '';
+
+            // Simple hardcoded RBAC for demo
+            if (username === 'admin' || username === 'staff') {
+                sessionStorage.setItem('isAdmin', 'true');
+                sessionStorage.setItem('adminRole', username === 'admin' ? 'superadmin' : 'staff');
+                Swal.fire({
+                    icon: 'success',
+                    title: `Welcome ${username === 'admin' ? 'Super Admin' : 'Staff'}`,
+                    text: 'Redirecting to Dashboard...',
+                    timer: 1000,
+                    showConfirmButton: false,
+                    background: '#05201A',
+                    color: '#fff'
+                }).then(() => {
+                    closeAccessModal();
+                    // Redirect to admin.html
+                    window.location.href = 'admin.html';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Access Denied',
+                    text: 'Invalid admin username',
+                    confirmButtonColor: '#EF4444',
+                    background: '#05201A',
+                    color: '#fff'
+                });
+            }
+        };
+    </script>
+    <script src="js/payment.js"></script>
+    <script>
+        window.handleFormSubmit = async (e, type) => {
+            e.preventDefault();
+
+            // Check if user is logged in - use Firebase auth directly for reliability
+            const user = fbAuth ? fbAuth.currentUser : null;
+
+            if (!user) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'กรุณาเข้าสู่ระบบ',
+                    text: 'คุณต้องสมัครสมาชิกหรือเข้าสู่ระบบก่อนลงทะเบียน',
+                    confirmButtonText: 'สมัครสมาชิก',
+                    showCancelButton: true,
+                    cancelButtonText: 'ยกเลิก',
+                    confirmButtonColor: '#2EC4B6',
+                    cancelButtonColor: '#6B7280',
+                    background: '#05201A',
+                    color: '#fff'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        openAccessModal('signup');
+                    }
+                });
+                return;
+            }
+
+            const form = e.target;
+            const btn = form.querySelector('.submit-btn');
+            const progress = form.querySelector('.progress-bar');
+            const isEn = document.documentElement.lang === 'en';
+
+            btn.disabled = true;
+            progress.style.width = '100%';
+
+            try {
+                if (!fbDb) throw new Error("Offline Mode");
+
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                // Get user data from Firestore
+                const userDoc = await fbDb.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+
+                if (type === 'attendee') {
+                    // Check Payment Requirement
+                    const topic = data.topic;
+                    // Force price for Grand Opening to ensure it works
+                    let price = (window.PAID_TOPICS && window.PAID_TOPICS[topic]) || 0;
+                    if (topic === 'grand-opening') price = 4500;
+
+                    console.log("Submit Topic:", topic, "Price:", price);
+                    // alert("Debug: Topic=" + topic + " Price=" + price); // Uncomment if needed
+                    const initialStatus = price > 0 ? 'pending_payment' : 'confirmed';
+
+                    // Save to eventRegistrations collection
+                    const docRef = await fbDb.collection('eventRegistrations').add({
+                        userId: user.uid,
+                        userEmail: user.email,
+                        userName: userData?.displayName || data.name,
+                        phoneNumber: data.phone,
+                        eventType: topic,
+                        registrationType: 'attendee',
+                        registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: initialStatus,
+                        amount: price
+                    });
+
+                    // If paid, redirect to payment modal
+                    if (price > 0) {
+                        finalizeSubmit(form, btn, progress);
+                        // Open payment modal directly without intermediate alert
+                        setTimeout(() => {
+                            openPaymentModal(docRef.id, price);
+                        }, 500);
+                        return; // Stop here, don't show generic success
+                    }
+
+                } else if (type === 'vendor') {
+                    const boothSize = (data.booth_size || '').toUpperCase();
+                    let price = 0;
+                    if (boothSize === 'S') price = 20000;
+                    else if (boothSize === 'M') price = 35000;
+                    else if (boothSize === 'L') price = 60000;
+
+                    // Save to boothBookings collection
+                    const docRef = await fbDb.collection('boothBookings').add({
+                        userId: user.uid,
+                        userEmail: user.email,
+                        companyName: data.company || '',
+                        taxId: data.tax_id || '',
+                        contactPerson: data.contact || '',
+                        phoneNumber: data.phone || '',
+                        boothType: boothSize || 'S',
+                        bookedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: 'pending_payment',
+                        amount: price || 20000
+                    });
+
+                    finalizeSubmit(form, btn, progress);
+                    setTimeout(() => {
+                        openPaymentModal(docRef.id, price, 'boothBookings');
+                    }, 500);
+                    return; // Stop here, go to payment flow
+                }
+
+                setTimeout(async () => {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: isEn ? 'Success!' : 'สำเร็จ!',
+                        text: type === 'attendee'
+                            ? (isEn ? 'Event registration saved. You can check status in My Dashboard.' : `ลงทะเบียนเรียบร้อย ตรวจสอบสถานะได้ที่ My Dashboard`)
+                            : (isEn ? 'Booth booking saved. Check status in My Dashboard.' : `จองบูธเรียบร้อย ตรวจสอบสถานะได้ที่ My Dashboard`),
+                        confirmButtonColor: '#2EC4B6',
+                        timer: 2000
+                    });
+
+                    finalizeSubmit(form, btn, progress);
+                    closeAccessModal(); // Close registration modal
+                    openDashboardModal(); // Open user dashboard to see status/pay
+                }, 1500);
+
+            } catch (error) {
+                console.error("Submit failed:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+                    confirmButtonColor: '#F77F00'
+                });
+                btn.disabled = false;
+                progress.style.width = '0%';
+            }
+        };
+
+        function finalizeSubmit(form, btn, progress) {
+            form.reset();
+            closeAccessModal();
+            progress.style.width = '0%';
+            btn.disabled = false;
+        }
+
+
+        // Initialize Courses and Countdown
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCourses();
+
+            // Countdown Timer - Event Date: March 20, 2026 (พ.ศ. 2569) at 08:00 Thailand time
+            const eventDate = new Date('2026-03-20T08:00:00+07:00').getTime();
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = eventDate - now;
+
+                if (distance < 0) {
+                    // Event has started
+                    document.getElementById('countdown-days').textContent = '0';
+                    document.getElementById('countdown-hours').textContent = '0';
+                    document.getElementById('countdown-mins').textContent = '0';
+                    document.getElementById('countdown-secs').textContent = '0';
+                    return;
+                }
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown-days').textContent = days;
+                document.getElementById('countdown-hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('countdown-mins').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('countdown-secs').textContent = seconds.toString().padStart(2, '0');
+            }
+
+            // Update immediately then every second
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+
+            // ====== SCROLL REVEAL ANIMATIONS ======
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            // Apply reveal animation to sections and cards
+            document.querySelectorAll('section').forEach((section, index) => {
+                const header = section.querySelector('h2, .text-2xl, .text-3xl');
+                if (header) {
+                    header.classList.add('reveal');
+                    revealObserver.observe(header);
+                }
+            });
+
+            // Animate all cards on scroll
+            document.querySelectorAll('.rounded-lg, .rounded-xl, .rounded-2xl').forEach((card, index) => {
+                if (card.closest('.tab-pane') || card.closest('#modal-access') || card.closest('.chat-widget')) return;
+                // Skip modal and chat widget
+                card.classList.add('reveal');
+                card.style.transitionDelay = `${(index % 4) * 0.1} s`;
+                revealObserver.observe(card);
+            });
+
+            // Apply 3D hover effect to workshop cards
+            document.querySelectorAll('[id^="workshop"] .bg-gradient-to-br, section .group').forEach(card => {
+                card.classList.add('card-3d');
+            });
+
+            // Add floating animation to icons
+            document.querySelectorAll('.fa-solid').forEach((icon, index) => {
+                if (index % 5 === 0) {
+                    icon.classList.add('animate-float-slow');
+                }
+            });
+
+            // Add pulse glow to countdown timer
+            const countdownTimer = document.getElementById('countdown-timer');
+            if (countdownTimer) {
+                countdownTimer.classList.add('animate-pulse-glow');
+            }
+
+            // Add underline hover to nav links
+            document.querySelectorAll('nav a, .nav-links a').forEach(link => {
+                link.classList.add('underline-hover');
+            });
+
+            // ====== PARALLAX EFFECT ON SCROLL ======
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        const scrolled = window.pageYOffset;
+
+                        // Parallax for decorative blurs
+                        document.querySelectorAll('.blur-3xl').forEach((blur, index) => {
+                            const speed = 0.05 + (index * 0.02);
+                            blur.style.transform = `translateY(${scrolled * speed}px)`;
+                        });
+
+                        // ====== SCROLL PROGRESS BAR ======
+                        const scrollProgress = document.getElementById('scroll-progress');
+                        if (scrollProgress) {
+                            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                            const scrollPercent = (scrolled / docHeight) * 100;
+                            scrollProgress.style.width = `${scrollPercent}%`;
+                        }
+
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+
+            // ====== COUNTER ANIMATION ======
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const target = parseInt(counter.getAttribute('data-target'));
+                        const duration = 2000; // 2 seconds
+                        const step = target / (duration / 16); // ~60fps
+                        let current = 0;
+
+                        const updateCounter = () => {
+                            current += step;
+                            if (current < target) { counter.textContent = Math.floor(current); requestAnimationFrame(updateCounter); }
+                            else { counter.textContent = target; }
+                        }; updateCounter(); counterObserver.unobserve(counter);
+                    }
+                });
+            }, { threshold: 0.5 }); document.querySelectorAll('.counter').forEach(counter => {
+                counterObserver.observe(counter);
+            });
+
+            // ====== NAVIGATION ACTIVE STATE ======
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+            const highlightNav = () => {
+                const scrollY = window.pageYOffset;
+
+                sections.forEach(section => {
+                    const sectionHeight = section.offsetHeight;
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionId = section.getAttribute('id');
+
+                    if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('text-[#2EC4B6]', 'font-bold');
+                            if (link.getAttribute('href') === '#' + sectionId) {
+                                link.classList.add('text-[#2EC4B6]', 'font-bold');
+                            }
+                        });
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', highlightNav);
+
+            console.log('🎨 Advanced animations initialized!');
+        });
+    </script>
+    <!-- AI CHAT WIDGET -->
+    <div id="ai-chat-widget"
+        class="hidden chat-widget bg-white shadow-2xl border border-slate-200 rounded-2xl overflow-hidden flex flex-col w-80 sm:w-96 h-[500px] fixed bottom-24 right-6 z-[200] transition-all duration-300 transform scale-95 opacity-0">
+        <div class="bg-slate-50 p-4 text-slate-800 flex justify-between items-center border-b border-slate-200">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-robot bg-teal-500 text-white rounded-full p-1.5 text-xs shadow-sm"></i>
+                <span class="font-bold text-sm text-slate-700">Dent X AI Assistant</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="endChatSession()"
+                    class="text-xs text-red-500 hover:text-red-600 font-medium px-2 py-1 rounded hover:bg-red-50 transition"
+                    title="จบการสนทนา (ล้างแชท)">
+                    <i class="fa-solid fa-trash-can mr-1"></i> จบแชท
+                </button>
+                <button onclick="closeChatWidget()" class="text-slate-400 hover:text-slate-600 transition"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50" id="chat-messages">
+            <!-- Messages will appear here -->
+            <div class="flex justify-start">
+                <div
+                    class="bg-white border border-slate-200 text-slate-600 rounded-2xl rounded-tl-none py-2 px-4 text-sm shadow-sm max-w-[80%]">
+                    สวัสดีครับ! มีอะไรให้ผมช่วยไหมครับ? เกี่ยวกับงานประชุมหรือข้อมูลอื่นๆ
+                    ถามได้เลยครับ
+                </div>
+            </div>
+        </div>
+        <div class="p-3 bg-white border-t border-slate-200">
+            <form id="chat-form" class="flex gap-2" onsubmit="handleChatSubmit(event)">
+                <input type="text" id="chat-input"
+                    class="flex-1 bg-slate-100 border-0 rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none transition"
+                    placeholder="พิมพ์ข้อความ...">
+                <button type="submit"
+                    class="bg-teal-500 hover:bg-teal-600 text-white rounded-full w-9 h-9 flex items-center justify-center transition shadow-md">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FLOATING ACTION BUTTON (FAB) -->
+    <!-- FLOATING ACTION BUTTONS (FAB) -->
+    <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-40 items-end">
+        <!-- Chat Trigger -->
+        <button onclick="openChatWidget()"
+            class="w-14 h-14 bg-teal-500 text-white rounded-full shadow-lg hover:bg-teal-600 hover:shadow-teal-500/40 transition-all transform hover:scale-110 flex items-center justify-center group relative animate-bounce-slow">
+            <i class="fa-solid fa-comment-dots text-2xl group-hover:rotate-12 transition-transform"></i>
+            <span
+                class="absolute right-full mr-3 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">Chat
+                with AI</span>
+        </button>
+
+        <!-- Scroll to Top -->
+        <button onclick="window.scrollTo({top:0, behavior:'smooth'})"
+            class="w-12 h-12 bg-white text-slate-400 border border-slate-200 rounded-full shadow-md hover:text-teal-600 hover:border-teal-200 hover:shadow-lg transition-all transform hover:-translate-y-1 flex items-center justify-center">
+            <i class="fa-solid fa-arrow-up"></i>
+        </button>
+    </div>
+
+    <script>
+        // ===== CHAT SYSTEM =====
+        const chatWidget = document.getElementById('ai-chat-widget');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        let chatSessionId = localStorage.getItem('chatSessionId');
+        let chatUnsubscribe = null;
+
+        // Open Chat Widget
+        window.openChatWidget = function () {
+            const widget = document.getElementById('ai-chat-widget');
+            widget.classList.remove('hidden');
+            bringToFront(widget); // Dynamic z-index
+
+            // Trigger animation
+            setTimeout(() => {
+                widget.style.transform = 'scale(1)';
+                widget.style.opacity = '1';
+            }, 10);
+
+            // Initialize chat if not already done
+            if (!chatUnsubscribe && window.fbDb) {
+                initChat();
+            }
+        };
+
+        // Close Chat Widget
+        window.closeChatWidget = function () {
+            const widget = document.getElementById('ai-chat-widget');
+            widget.style.transform = 'scale(0.95)';
+            widget.style.opacity = '0';
+
+            setTimeout(() => {
+                widget.classList.add('hidden');
+            }, 300);
+        };
+
+        if (!chatSessionId) {
+            generateNewSession();
+        }
+
+        function generateNewSession() {
+            chatSessionId = 'sess_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('chatSessionId', chatSessionId);
+        }
+
+        // Initialize Chat
+        function initChat() {
+            if (!window.firebase || !window.fbDb) return;
+
+            // Unsubscribe previous listener if exists
+            if (chatUnsubscribe) {
+                chatUnsubscribe();
+            }
+
+            // If loading a new session, clear messages first
+            chatMessages.innerHTML = `
+            <div class="flex justify-start">
+                <div class="bg-white border border-slate-200 text-slate-600 rounded-2xl rounded-tl-none py-2 px-4 text-sm shadow-sm max-w-[80%]">
+                    สวัสดีครับ! มีอะไรให้ผมช่วยไหมครับ? เกี่ยวกับงานประชุมหรือข้อมูลอื่นๆ ถามได้เลยครับ
+                </div>
+            </div>
+            `;
+
+            // Listen for messages
+            chatUnsubscribe = fbDb.collection('chats').doc(chatSessionId).collection('messages')
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            displayMessage(change.doc.data());
+                        }
+                    });
+                });
+        }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            chatInput.value = '';
+
+            try {
+                let userName = 'Guest User';
+                let userId = 'anonymous';
+                let userEmail = '';
+
+                if (window.fbAuth && window.fbAuth.currentUser) {
+                    const user = window.fbAuth.currentUser;
+                    userName = user.displayName || 'User';
+                    userId = user.uid;
+                    userEmail = user.email || '';
+                }
+
+                // Update chat document metadata
+                await fbDb.collection('chats').doc(chatSessionId).set({
+                    lastMessage: text,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    unreadCount: firebase.firestore.FieldValue.increment(1),
+                    userName: userName,
+                    userId: userId,
+                    userEmail: userEmail,
+                    status: 'active'
+                }, { merge: true });
+
+                // Add message
+                await fbDb.collection('chats').doc(chatSessionId).collection('messages').add({
+                    text,
+                    sender: 'user',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error sending message:", error);
+            }
+        }
+
+        window.endChatSession = async () => {
+            if (!confirm('ต้องการจบบทสนทนาหรือไม่? ประวัติการสนทนาจะถูกล้างจากหน้าจอนี้')) return;
+
+            try {
+                // Mark as closed in Firestore (optional, helps admin know it's done)
+                if (window.fbDb) {
+                    await fbDb.collection('chats').doc(chatSessionId).update({
+                        status: 'closed',
+                        closedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            } catch (e) { console.log('Error closing chat:', e); }
+
+            // Generate new session
+            localStorage.removeItem('chatSessionId');
+            generateNewSession();
+
+            // Re-init UI
+            initChat();
+
+            // Close widget
+            closeChatWidget();
+        };
+
+        function displayMessage(msg) {
+            const isUser = msg.sender === 'user';
+            const div = document.createElement('div');
+            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} `;
+
+            // Create message content container
+            const contentDiv = document.createElement('div');
+            contentDiv.className = `${isUser ? 'bg-teal-500 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-600 rounded-tl-none'} rounded-2xl py-2 px-4 text-sm shadow-sm max-w-[80%] break-words`;
+
+            // Safe text insertion (Prevents XSS)
+            contentDiv.textContent = msg.text;
+
+            div.appendChild(contentDiv);
+            chatMessages.appendChild(div);
+
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 50);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(initChat, 1000);
+
+            // Re-link user when auth state changes
+            if (window.firebase) {
+                firebase.auth().onAuthStateChanged(user => {
+                    // We don't force reset session on login to preserve context,
+                    // but future messages will be linked to the user.
+                });
+            }
+        });
+    </script>
+
+
+    <!-- User Dashboard Modal -->
+    <!-- User Dashboard Modal -->
+    <!-- User Dashboard Modal -->
+    <div id="modal-dashboard" style="z-index: 9990;"
+        class="fixed inset-0 z-[200] hidden transition-opacity duration-300 flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity"
+            onclick="closeDashboardModal()"></div>
+
+        <!-- Modal Content -->
+        <div class="relative w-full max-w-4xl max-h-[90vh] flex flex-col transition-all duration-300 transform scale-95 opacity-0 z-10"
+            id="dashboard-panel">
+
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col h-full w-full">
+                <!-- Dashboard Header -->
+                <div
+                    class="bg-gradient-to-r from-teal-600 to-teal-500 p-4 sm:p-6 text-white flex justify-between items-center shrink-0 relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl">
+                    </div>
+                    <div class="flex items-center gap-3 sm:gap-4 relative z-10">
+                        <div
+                            class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 hidden sm:flex items-center justify-center backdrop-blur-md border border-white/30">
+                            <i class="fa-solid fa-user text-lg sm:text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg sm:text-xl leading-tight" data-i18n="dash_my_dash">My
+                                Dashboard</h3>
+                            <p class="text-teal-100 text-[10px] sm:text-sm leading-tight" data-i18n="dash_manage">
+                                จัดการข้อมูลการลงทะเบียน
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 sm:gap-2 relative z-10 shrink-0">
+                        <button onclick="logout()"
+                            class="text-white/80 hover:text-white hover:bg-white/10 px-2 sm:px-3 py-1.5 rounded-lg transition text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 border border-white/10 sm:border-0 sm:border-l sm:rounded-none">
+                            <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline"
+                                data-i18n="dash_signout">Sign Out</span>
+                        </button>
+                        <button onclick="closeDashboardModal()"
+                            class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition"
+                            title="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scrollable Content Area -->
+                <div class="overflow-y-auto flex-1 p-6">
+                    <!-- User Info -->
+                    <div class="mb-6 bg-white p-4 rounded-xl border border-slate-200">
+                        <div class="flex justify-between items-center w-full">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
+                                    <i class="fa-solid fa-user-circle text-xl text-teal-500"></i>
+                                </div>
+                                <div>
+                                    <p id="dashboard-name" class="text-sm font-bold text-slate-700">
+                                        Loading...</p>
+                                    <p id="dashboard-email" class="text-xs text-slate-500">
+                                        loading...</p>
+                                    <!-- Phone Verification Status Badge -->
+                                    <div id="dashboard-phone-status"
+                                        class="mt-1 flex items-center gap-1 text-[10px] font-bold">
+                                        <!-- JS will inject badge here based on phoneVerified status -->
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="toggleEditProfile()"
+                                class="text-xs text-teal-600 font-bold hover:text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                                <i class="fa-solid fa-pen"></i> <span data-i18n="dash_edit_profile">แก้ไขโปรไฟล์</span>
+                            </button>
+                        </div>
+
+                        <!-- Phone Verification Action Area (Hidden by default, shown if unverified) -->
+                        <div id="phone-verification-action"
+                            class="hidden mt-3 p-3 bg-orange-50 rounded-lg border border-orange-100 flex justify-between items-center">
+                            <div class="text-xs text-slate-600">
+                                <i class="fa-solid fa-shield-halved text-orange-500 mr-1"></i>
+                                เพิ่มความปลอดภัยให้บัญชีของคุณ
+                            </div>
+                            <button type="button" onclick="startPhoneVerification()"
+                                class="text-xs bg-orange-500 text-white px-3 py-1.5 rounded-lg font-bold hover:bg-orange-600 transition">
+                                ยืนยันเบอร์มือถือ
+                            </button>
+                        </div>
+
+                        <!-- OTP Input Area (Hidden initially) -->
+                        <div id="dashboard-otp-container"
+                            class="hidden mt-3 p-4 bg-slate-50 border border-slate-200 rounded-lg animate-slide-up-slight relative">
+                            <button type="button" onclick="cancelPhoneVerification()"
+                                class="absolute top-2 right-2 text-slate-400 hover:text-red-500">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                            <h5 class="text-center font-bold text-sm text-slate-800 mb-2">ยืนยันรหัส
+                                OTP 6 หลัก</h5>
+                            <p class="text-center text-xs text-slate-500 mb-3">รหัสถูกส่งไปยังเบอร์
+                                <span id="dashboard-otp-display-phone" class="font-bold text-teal-600"></span>
+                            </p>
+
+                            <input type="text" id="dashboard-otp-code" inputmode="numeric" pattern="[0-9]*"
+                                maxlength="6"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length === 6) confirmPhoneVerification();"
+                                class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:ring-2 focus:border-teal-500 text-center tracking-[0.5em] text-lg font-bold outline-none mb-2"
+                                placeholder="------">
+
+                            <div id="dashboard-recaptcha-container" class="flex justify-center mb-2"></div>
+
+                            <button type="button" id="btn-dashboard-verify-otp" onclick="confirmPhoneVerification()"
+                                class="w-full py-2 bg-teal-600 text-white rounded-lg text-sm font-bold hover:bg-teal-700 transition">
+                                ยืนยันรหัส
+                            </button>
+                        </div>
+
+                        <!-- Edit Profile Form (Hidden by default) -->
+                        <div id="edit-profile-container"
+                            class="hidden mt-4 pt-4 border-t border-slate-100 animate-slide-up-slight">
+                            <form id="form-edit-profile" onsubmit="saveUserProfile(event)" class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1"
+                                        data-i18n="placeholder_name">ชื่อ-นามสกุล</label>
+                                    <input type="text" id="edit-profile-name"
+                                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                                        required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1"
+                                        data-i18n="placeholder_phone">เบอร์โทรศัพท์</label>
+                                    <input type="tel" id="edit-profile-phone" inputmode="numeric" pattern="[0-9]*"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                                        required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1"
+                                        data-i18n="placeholder_org">สถาบัน / คลินิก (ถ้ามี)</label>
+                                    <input type="text" id="edit-profile-org"
+                                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none">
+                                </div>
+                                <div class="flex gap-2 pt-2">
+                                    <button type="button" onclick="toggleEditProfile()"
+                                        class="w-1/2 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200 transition">ยกเลิก</button>
+                                    <button type="submit" id="edit-profile-submit-btn"
+                                        class="w-1/2 py-2 bg-teal-600 text-white rounded-lg text-sm font-bold hover:bg-teal-700 transition flex items-center justify-center">
+                                        บันทึกข้อมูล
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Event Registrations Section -->
+                    <div class="mb-8">
+                        <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-ticket text-teal-500"></i>
+                            <span data-i18n="dash_regis">Event Registrations</span>
+                        </h4>
+                        <div id="dashboard-registrations" class="space-y-3">
+                            <!-- Javascript will populate this -->
+                            <div
+                                class="text-center py-8 text-slate-400 text-xs bg-white rounded-lg border border-dashed border-slate-300">
+                                <i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50"></i>
+                                <p data-i18n="dash_no_reg">ไม่พบประวัติการลงทะเบียน</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Booth Bookings Section -->
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-store text-teal-500"></i>
+                            <span data-i18n="dash_bookings">Booth Bookings</span>
+                        </h4>
+                        <div id="dashboard-bookings" class="space-y-3">
+                            <!-- Javascript will populate this -->
+                            <div
+                                class="text-center py-8 text-slate-400 text-xs bg-white rounded-lg border border-dashed border-slate-300">
+                                <i class="fa-regular fa-folder-open text-3xl mb-2 opacity-50"></i>
+                                <p>ไม่พบการจองบูธ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- End scrollable area -->
+
+                <!-- Close Button (Mobile friendly) -->
+                <div class="p-4 bg-white border-t border-slate-100 md:hidden shrink-0 flex justify-center">
+                    <button onclick="closeDashboardModal()"
+                        class="w-full py-3 bg-slate-100 text-slate-600 font-bold rounded-xl active:bg-slate-200">
+                        Close Dashboard
+                    </button>
+                </div>
+            </div> <!-- End Inner Content -->
+        </div> <!-- End Modal Wrapper -->
+    </div> <!-- End Modal Dashboard -->
+
+    <!-- ACCESS HUB MODAL (Login / Register / Dashboard) -->
+    <div id="modal-access" style="z-index: 9990;"
+        class="modal fixed inset-0 flex items-center justify-center pointer-events-none hidden">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeAccessModal()">
+        </div>
+        <div
+            class="modal-content bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative m-4 max-h-[90vh] flex flex-col">
+
+            <button onclick="closeAccessModal()"
+                class="absolute top-4 right-4 z-10 text-slate-400 hover:text-slate-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <!-- Header Image -->
+            <div class="h-32 bg-gradient-to-br from-teal-500 to-teal-700 relative shrink-0 overflow-hidden">
+                <div
+                    class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20">
+                </div>
+                <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/50 to-transparent">
+                </div>
+                <div class="absolute bottom-4 left-6 text-white">
+                    <h3 class="text-2xl font-bold">Dent X Access Hub</h3>
+                    <p class="text-teal-100 text-sm">Portal for Innovation & Learning</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-slate-100 shrink-0 bg-white">
+                <!-- Auth Tabs (before login) -->
+                <button id="tab-btn-login" onclick="switchTab('login')"
+                    class="tab-btn flex-1 text-center py-3 text-sm font-medium hover:bg-slate-50 transition relative active-login">
+                    <i class="fa-solid fa-right-to-bracket mr-1"></i> <span data-i18n="nav_login">เข้าสู่ระบบ</span>
+                </button>
+                <button id="tab-btn-signup" onclick="switchTab('signup')"
+                    class="tab-btn flex-1 text-center py-3 text-sm font-medium hover:bg-slate-50 transition relative">
+                    <i class="fa-solid fa-user-plus mr-1"></i> <span data-i18n="nav_signup">สมัครสมาชิก</span>
+                </button>
+
+                <!-- Service Tabs (after login only) -->
+                <button id="tab-btn-attendee" onclick="switchTab('attendee')"
+                    class="tab-btn flex-1 text-center py-3 text-sm font-medium hover:bg-slate-50 transition relative"
+                    style="display:none">
+                    <i class="fa-solid fa-ticket mr-1"></i> ลงทะเบียนงาน
+                </button>
+                <button id="tab-btn-vendor" onclick="switchTab('vendor')"
+                    class="tab-btn flex-1 text-center py-3 text-sm font-medium hover:bg-slate-50 transition relative"
+                    style="display:none">
+                    <i class="fa-solid fa-store mr-1"></i> จองบูธ
+                </button>
+                <!-- Dashboard tab removed - using separate modal -->
+                <button id="tab-btn-dashboard" style="display:none"></button>
+            </div>
+
+            <!-- Content Body -->
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 bg-slate-50">
+
+                <!-- TAB: SIGNUP (Member Registration) -->
+                <div id="tab-signup" class="tab-pane slide-up">
+                    <div class="text-center mb-6">
+                        <h4 class="text-xl font-bold text-slate-800">สมัครสมาชิก</h4>
+                        <p class="text-slate-500 text-sm">สร้างบัญชีเพื่อเข้าถึงระบบทั้งหมด</p>
+                    </div>
+                    <form id="form-signup" onsubmit="handleSignUp(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">ชื่อ-นามสกุล</label>
+                            <input type="text" id="signup-name" required
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">อีเมล</label>
+                            <input type="email" id="signup-email" required
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">เบอร์โทรศัพท์มือถือ</label>
+                            <input type="tel" id="signup-phone" required inputmode="numeric" pattern="[0-9]*"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                placeholder="08XXXXXXXX">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">รหัสผ่าน</label>
+                            <input type="password" id="signup-password" required minlength="8"
+                                oninput="checkPasswordStrength(this.value)"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                placeholder="อย่างน้อย 8 ตัวอักษรรหัสมาตรฐาน">
+
+                            <!-- Password Strength UI -->
+                            <div class="mt-2">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-[10px] font-bold text-slate-500">ระดับความปลอดภัย:</span>
+                                    <span id="password-strength-text"
+                                        class="text-[10px] font-bold text-slate-400">กรุณากรอกรหัสผ่าน</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-1.5 flex overflow-hidden">
+                                    <div id="pw-strength-bar-1"
+                                        class="h-full w-1/3 bg-slate-200 transition-all duration-300">
+                                    </div>
+                                    <div id="pw-strength-bar-2"
+                                        class="h-full w-1/3 border-l border-white bg-slate-200 transition-all duration-300">
+                                    </div>
+                                    <div id="pw-strength-bar-3"
+                                        class="h-full w-1/3 border-l border-white bg-slate-200 transition-all duration-300">
+                                    </div>
+                                </div>
+                                <ul id="password-criteria" class="text-[9px] text-slate-500 mt-2 space-y-0.5">
+                                    <li id="crit-length" class="flex items-center gap-1"><i
+                                            class="fa-solid fa-circle text-[6px] text-slate-300"></i>
+                                        อย่างน้อย 8
+                                        ตัวอักษร</li>
+                                    <li id="crit-lower" class="flex items-center gap-1"><i
+                                            class="fa-solid fa-circle text-[6px] text-slate-300"></i>
+                                        มีตัวอักษรพิมพ์เล็ก (a-z)</li>
+                                    <li id="crit-upper" class="flex items-center gap-1"><i
+                                            class="fa-solid fa-circle text-[6px] text-slate-300"></i>
+                                        มีตัวอักษรพิมพ์ใหญ่ (A-Z)</li>
+                                    <li id="crit-number" class="flex items-center gap-1"><i
+                                            class="fa-solid fa-circle text-[6px] text-slate-300"></i>
+                                        มีตัวเลข (0-9)
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">ยืนยันรหัสผ่าน</label>
+                            <input type="password" id="signup-confirm-password" required minlength="6"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                placeholder="กรอกรหัสผ่านอีกครั้ง">
+                        </div>
+                        <button type="submit"
+                            class="w-full py-2.5 mt-4 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition shadow-md flex items-center justify-center">
+                            สร้างบัญชี
+                        </button>
+                        <p class="text-xs text-center text-slate-500 mt-2">
+                            มีบัญชีแล้ว? <span class="text-blue-600 cursor-pointer underline"
+                                onclick="switchTab('login')">เข้าสู่ระบบ</span>
+                        </p>
+                    </form>
+                </div>
+
+                <!-- TAB: LOGIN -->
+                <div id="tab-login" class="tab-pane active slide-up">
+                    <div class="text-center mb-6">
+                        <h4 class="text-xl font-bold text-slate-800" data-i18n="btn_login">
+                            เข้าสู่ระบบ</h4>
+                        <p class="text-slate-500 text-sm" data-i18n="form_login_desc">
+                            สำหรับสมาชิกและผู้ดูแลระบบ
+                        </p>
+                    </div>
+                    <form onsubmit="handleLogin(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1"
+                                data-i18n="placeholder_name">ชื่อผู้ใช้งาน</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-3 text-slate-400"><i
+                                        class="fa-regular fa-user"></i></span>
+                                <input type="text" id="username"
+                                    class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none transition"
+                                    placeholder="Username / Email" required>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-sm font-medium text-slate-700">รหัสผ่าน</label>
+                                <button type="button" onclick="promptForgotPassword()"
+                                    class="text-xs font-bold text-teal-600 hover:text-teal-700 transition">ลืมรหัสผ่าน?</button>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute left-3 top-3 text-slate-400"><i
+                                        class="fa-solid fa-lock"></i></span>
+                                <input type="password" id="password"
+                                    class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none transition"
+                                    placeholder="Password" required>
+                            </div>
+                        </div>
+                        <button type="submit"
+                            class="w-full py-2.5 bg-gradient-to-r from-teal-500 to-teal-400 text-white rounded-xl shadow-lg shadow-teal-500/30 font-bold hover:shadow-teal-500/50 transition transform active:scale-95">
+                            <span data-i18n="btn_login">เข้าสู่ระบบ</span>
+                        </button>
+                        <div class="mt-4 text-center">
+                            <p class="text-xs text-slate-500">
+                                มีปัญหาการเข้าสู่ระบบ?
+                                <a href="#"
+                                    onclick="closeAccessModal(); setTimeout(() => openChatWidget(), 300); return false;"
+                                    class="font-bold text-teal-600 hover:text-teal-700 transition underline">ติดต่อแอดมิน
+                                    (Need Help?)</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- TAB: REGISTER (ATTENDEE) -->
+                <div id="tab-attendee" class="tab-pane slide-up">
+                    <div class="text-center mb-6">
+                        <h4 class="text-xl font-bold text-slate-800" data-i18n="nav_register">
+                            ลงทะเบียนเข้างาน
+                        </h4>
+                        <p class="text-slate-500 text-sm">สำหรับทันตแพทย์และผู้สนใจทั่วไป</p>
+                    </div>
+                    <form id="form-attendee" onsubmit="handleFormSubmit(event, 'attendee')" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="col-span-2">
+                                <label class="block text-xs font-bold text-slate-600 mb-1"
+                                    data-i18n="placeholder_name">ชื่อ-นามสกุล</label>
+                                <input type="text" id="attendee-name" name="name"
+                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1"
+                                    data-i18n="placeholder_phone">เบอร์โทรศัพท์</label>
+                                <input type="tel" id="attendee-phone" name="phone" inputmode="numeric" pattern="[0-9]*"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                                    required>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-xs font-bold text-slate-600 mb-1">หัวข้อที่สนใจ</label>
+                                <select id="attendee-topic" name="topic"
+                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm">
+                                    <option value="grand-opening">GRAND OPENING ONSITE: Face-Forward
+                                        Soft Tissue Driven
+                                        Orthodontics & Digital Dentistry Paradigm (20 มี.ค. 2569) -
+                                        4,500 THB</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit"
+                            class="submit-btn relative w-full py-2.5 mt-4 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition shadow-md overflow-hidden">
+                            <span data-i18n="btn_confirm_reg">ยืนยันการลงทะเบียน</span>
+                            <div class="progress-bar absolute bottom-0 left-0 h-1 bg-teal-300 transition-all duration-300"
+                                style="width: 0%;"></div>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB: BOOTH (VENDOR) -->
+                <div id="tab-vendor" class="tab-pane slide-up">
+                    <div class="text-center mb-6">
+                        <h4 class="text-xl font-bold text-slate-800">จองบูธแสดงสินค้า</h4>
+                        <p class="text-slate-500 text-sm">สำหรับบริษัทและร้านค้าทันตกรรม</p>
+                    </div>
+                    <form id="form-vendor" onsubmit="handleFormSubmit(event, 'vendor')" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1"
+                                data-i18n="placeholder_company">ชื่อบริษัท / ร้านค้า</label>
+                            <input type="text" id="vendor-company" name="company"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1"
+                                    data-i18n="placeholder_contact">ผู้ติดต่อ</label>
+                                <input type="text" id="vendor-contact" name="contact"
+                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                    required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1"
+                                    data-i18n="placeholder_phone">เบอร์โทรศัพท์</label>
+                                <input type="tel" id="vendor-phone" name="phone" inputmode="numeric" pattern="[0-9]*"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                                    required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">ขนาดพื้นที่
+                                (ตร.ม.)</label>
+                            <select id="vendor-size" name="booth_size"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm">
+                                <option value="S">Small (2x2 m) - 20,000 THB</option>
+                                <option value="M">Medium (3x3 m) - 35,000 THB</option>
+                                <option value="L">Large (6x3 m) - 60,000 THB</option>
+                            </select>
+                        </div>
+
+                        <!-- HONEYPOT FIELD (Hidden) -->
+                        <div style="position: absolute; left: -9999px;" aria-hidden="true">
+                            <label for="vendor_website_url">Website URL (leave blank)</label>
+                            <input type="text" id="vendor_website_url" name="website_url" tabindex="-1"
+                                autocomplete="off">
+                        </div>
+                        <button type="submit"
+                            class="submit-btn relative w-full py-2.5 mt-4 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600 transition shadow-md overflow-hidden">
+                            <span data-i18n="btn_send_booking">ส่งคำขอจองบูธ</span>
+                            <div class="progress-bar absolute bottom-0 left-0 h-1 bg-orange-300 transition-all duration-300"
+                                style="width: 0%;"></div>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB: DASHBOARD -->
+                <div id="tab-dashboard" class="tab-pane slide-up">
+                    <div class="text-center py-8">
+                        <div
+                            class="w-16 h-16 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-800 mb-1" data-i18n="dash_welcome">
+                            ยินดีต้อนรับ
+                        </h4>
+                        <p class="text-slate-500 mb-6" id="dash-username">User</p>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                <h5 class="text-2xl font-black text-teal-600" id="stat-regis-count">
+                                    0</h5>
+                                <p class="text-xs text-slate-500">Registrations</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                <h5 class="text-2xl font-black text-orange-500" id="stat-booking-count">0</h5>
+                                <p class="text-xs text-slate-500">Bookings</p>
+                            </div>
+                        </div>
+
+                        <button onclick="handleLogout()"
+                            class="text-red-500 text-sm font-bold hover:text-red-600 underline">
+                            <i class="fa-solid fa-right-from-bracket mr-1"></i> Sign Out
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div id="modal-payment" style="z-index: 9990;"
+        class="modal fixed inset-0 hidden pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closePaymentModal()">
+        </div>
+
+        <!-- Modal Content -->
+        <div class="relative w-full max-w-md max-h-[90vh] flex flex-col transition-all duration-300 transform scale-95 opacity-0 z-10"
+            id="modal-payment-content">
+
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col h-full w-full">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 text-white text-center relative shrink-0">
+                    <button onclick="closePaymentModal()"
+                        class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                    <div
+                        class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-md">
+                        <i class="fa-solid fa-receipt text-2xl text-teal-400"></i>
+                    </div>
+                    <h3 class="text-lg font-bold" data-i18n="pay_title">ชำระเงินค่าลงทะเบียน</h3>
+                    <div class="mt-2 text-3xl font-black text-teal-400 tracking-tight" id="pay-amount">4,500
+                        <span class="text-sm font-medium text-slate-400">THB</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1" data-i18n="pay_total">ยอดชำระทั้งหมด</p>
+                </div>
+
+                <!-- Body -->
+                <div class="p-6 overflow-y-auto custom-scrollbar">
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-6 text-center">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3" data-i18n="pay_scan">
+                            Scan to Pay via PromptPay</p>
+                        <div class="bg-white p-2 rounded-xl border border-slate-200 inline-block shadow-sm group relative cursor-pointer"
+                            onclick="openQRZoom(document.getElementById('payment-qr').src)">
+                            <img src="https://promptpay.io/0806369818/4500.png" alt="QR Code"
+                                class="w-48 h-48 object-contain mix-blend-multiply" id="payment-qr">
+                            <div
+                                class="absolute inset-0 flex items-center justify-center bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+                                <i class="fa-solid fa-magnifying-glass-plus text-slate-800 text-2xl drop-shadow-md"></i>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2" data-i18n="pay_zoom">💡 คลิกที่
+                            QR Code
+                            เพื่อขยาย
+                        </p>
+                    </div>
+
+                    <form id="form-payment" class="space-y-4" onsubmit="handlePaymentSubmit(event)">
+                        <input type="hidden" id="pay-reg-id">
+                        <input type="hidden" id="pay-collection" value="eventRegistrations">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1"
+                                data-i18n="pay_slip_label">แนบหลักฐานการโอนเงิน (Slip)</label>
+                            <input type="file" id="payment-slip" accept="image/*" required
+                                class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 transition cursor-pointer">
+                            <p class="text-xs text-slate-400 mt-1" data-i18n="pay_slip_hint">
+                                *รองรับไฟล์ภาพ
+                                .jpg,
+                                .png</p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <div class="p-4 border-t border-slate-100 bg-slate-50 shrink-0">
+                    <button type="submit" form="form-payment"
+                        class="w-full py-3 bg-teal-500 text-white font-bold rounded-xl hover:bg-teal-600 transition shadow-lg shadow-teal-500/20 active:scale-[0.98]">
+                        <span data-i18n="pay_btn_confirm">ยืนยันการชำระเงิน</span> <i
+                            class="fa-solid fa-circle-check ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMAGE LIGHTBOX MODAL -->
+    <div id="modal-image"
+        class="modal fixed inset-0 flex items-center justify-center bg-slate-900/90 backdrop-blur-md p-4 hidden"
+        style="z-index: 999999 !important;" onclick="closeImageModal()">
+        <button onclick="closeImageModal()" class="absolute top-6 right-6 text-white/50 hover:text-white transition">
+            <i class="fa-solid fa-xmark text-4xl"></i>
+        </button>
+        <img id="modal-image-src" src="" alt="Full Size"
+            class="max-w-full max-h-[90vh] rounded-lg shadow-2xl scale-95 transition-transform duration-300"
+            onclick="event.stopPropagation()">
+    </div>
+</body>
+
+</html>
